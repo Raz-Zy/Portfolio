@@ -1,15 +1,15 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-  return {
+    return {
     rules: [
       {
-        userAgent: '*',
+            userAgent: '*',
         allow: '/',
         disallow: ['/api/', '/_next/', '/admin/'],
-      },
+        },
     ],
-    sitemap: 'https://dara-it.site/sitemap.xml',
-    host: 'https://dara-it.site',
-  }
+        sitemap: 'https://dara-it.site/sitemap.xml',
+        host: 'https://dara-it.site',
+    }
 }

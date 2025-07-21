@@ -10,7 +10,7 @@ export default function GitHub() {
   const [user, setUser] = useState<GitHubUser | null>(null)
   const [organizations, setOrganizations] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<'all' | 'personal' | 'organization'>('all')
+  const [filter, setFilter] = useState<'personal' | 'organization'>('personal')
   const [selectedOrg, setSelectedOrg] = useState<string | null>(null)
   const [orgRepositories, setOrgRepositories] = useState<Repository[]>([])
   const [orgLoading, setOrgLoading] = useState(false)
@@ -134,17 +134,17 @@ export default function GitHub() {
   const filteredRepositories = repositories.filter(repo => {
     if (filter === 'personal') return repo.owner.login === username
     if (filter === 'organization') return false // Don't show any repositories for organization filter
-    return true // Show all repositories for 'all' filter
+    return false // This should never be reached
   }).slice(0, 9) // Show top 9 repositories
 
   const getRepositoryType = (repo: Repository) => {
     return repo.owner.login === username ? 'personal' : 'organization'
   }
 
-  const getFilteredCount = (filterType: 'all' | 'personal' | 'organization') => {
+  const getFilteredCount = (filterType: 'personal' | 'organization') => {
     if (filterType === 'personal') return repositories.filter(repo => repo.owner.login === username).length
     if (filterType === 'organization') return organizations.length
-    return repositories.length
+    return 0 // This should never be reached
   }
 
   const handleBackToOverview = () => {
@@ -154,95 +154,95 @@ export default function GitHub() {
   }
 
   const renderRepositoryCard = (repo: Repository, index: number) => (
-    <motion.div
-      key={repo.id}
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      viewport={{ once: true }}
-      className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 card-hover"
-    >
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-              {repo.name}
-            </h3>
-            <div className="flex items-center gap-1">
-              {getRepositoryType(repo) === 'personal' ? (
-                <FaUser className="text-green-500" size={14} title="Personal Repository" />
-              ) : (
-                <FaBuilding className="text-blue-500" size={14} title="Organization Repository" />
-              )}
-              {repo.private && (
-                <span className="text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-full">
-                  Private
-                </span>
-              )}
-            </div>
-          </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-            {repo.full_name}
-          </p>
-        </div>
-        <a
-          href={repo.html_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gray-500 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400 transition-colors"
-        >
-          <FaExternalLinkAlt size={16} />
-        </a>
-      </div>
-      
-      <p className="text-gray-600 dark:text-gray-300 mb-4 text-sm leading-relaxed">
-        {repo.description || 'No description available'}
-      </p>
-      
-      {repo.topics && repo.topics.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {repo.topics.slice(0, 3).map((topic) => (
-            <span
-              key={topic}
-              className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs rounded-full"
-            >
-              {topic}
-            </span>
-          ))}
-        </div>
-      )}
-      
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          {repo.language && (
-            <div className="flex items-center gap-1">
-              <div 
-                className="w-3 h-3 rounded-full" 
-                style={{ backgroundColor: getLanguageColor(repo.language) }}
-              />
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {repo.language}
-              </span>
-            </div>
-          )}
-          <div className="flex items-center gap-1">
-            <FaStar className="text-yellow-500" size={14} />
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              {repo.stargazers_count}
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <FaCodeBranch className="text-gray-500" size={14} />
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              {repo.forks_count}
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center gap-1">
-          <FaCalendar className="text-gray-400" size={12} />
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {formatDate(repo.updated_at)}
-          </span>
+              <motion.div
+                key={repo.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 card-hover"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                        {repo.name}
+                      </h3>
+                      <div className="flex items-center gap-1">
+                        {getRepositoryType(repo) === 'personal' ? (
+                          <FaUser className="text-green-500" size={14} title="Personal Repository" />
+                        ) : (
+                          <FaBuilding className="text-blue-500" size={14} title="Organization Repository" />
+                        )}
+                        {repo.private && (
+                          <span className="text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-full">
+                            Private
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      {repo.full_name}
+                    </p>
+                  </div>
+                  <a
+                    href={repo.html_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400 transition-colors"
+                  >
+                    <FaExternalLinkAlt size={16} />
+                  </a>
+                </div>
+                
+                <p className="text-gray-600 dark:text-gray-300 mb-4 text-sm leading-relaxed">
+                  {repo.description || 'No description available'}
+                </p>
+                
+                {repo.topics && repo.topics.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {repo.topics.slice(0, 3).map((topic) => (
+                      <span
+                        key={topic}
+                        className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs rounded-full"
+                      >
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    {repo.language && (
+                      <div className="flex items-center gap-1">
+                        <div 
+                          className="w-3 h-3 rounded-full" 
+                          style={{ backgroundColor: getLanguageColor(repo.language) }}
+                        />
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {repo.language}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-1">
+                      <FaStar className="text-yellow-500" size={14} />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {repo.stargazers_count}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <FaCodeBranch className="text-gray-500" size={14} />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {repo.forks_count}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <FaCalendar className="text-gray-400" size={12} />
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {formatDate(repo.updated_at)}
+                    </span>
         </div>
       </div>
     </motion.div>
@@ -410,17 +410,6 @@ export default function GitHub() {
               <div className="bg-white dark:bg-gray-900 rounded-full p-2 shadow-lg">
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setFilter('all')}
-                    className={`px-4 py-2 rounded-full font-medium transition-all duration-300 flex items-center gap-2 ${
-                      filter === 'all'
-                        ? 'bg-purple-600 text-white shadow-md'
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-                    }`}
-                  >
-                    <FaFilter size={14} />
-                    All ({getFilteredCount('all')})
-                  </button>
-                  <button
                     onClick={() => setFilter('personal')}
                     className={`px-4 py-2 rounded-full font-medium transition-all duration-300 flex items-center gap-2 ${
                       filter === 'personal'
@@ -493,10 +482,10 @@ export default function GitHub() {
                       <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                         <FaExternalLinkAlt size={12} />
                         Click to view repositories
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
               </motion.div>
             )}
 
@@ -511,7 +500,7 @@ export default function GitHub() {
               >
                 <FaGithub className="text-gray-400 dark:text-gray-500 text-6xl mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                  No {filter === 'all' ? '' : filter} repositories found
+                  No {filter} repositories found
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400">
                   Try switching to a different filter or check back later.

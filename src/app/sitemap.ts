@@ -6,13 +6,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Since this is a single-page application with hash routing,
   // we focus on the main page and its sections
-  return [
-    {
-      url: baseUrl,
+    return [
+        {
+            url: baseUrl,
       lastModified,
-      changeFrequency: 'monthly',
-      priority: 1,
-    },
+            changeFrequency: 'monthly',
+            priority: 1,
+        },
     {
       url: `${baseUrl}#about`,
       lastModified,
@@ -55,5 +55,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
-  ]
+    ]
 }

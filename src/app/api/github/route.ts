@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         if (GITHUB_TOKEN) {
           data = await fetchWithAuth(`https://api.github.com/user/orgs`)
         } else {
-          data = await fetchWithAuth(`https://api.github.com/users/${GITHUB_USERNAME}/orgs`)
+        data = await fetchWithAuth(`https://api.github.com/users/${GITHUB_USERNAME}/orgs`)
         }
         break
       
