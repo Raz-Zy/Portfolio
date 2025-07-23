@@ -1,5 +1,5 @@
 services:
-  portfolio:
+  dara_portfolio:
     build:
       context: .
       dockerfile: Dockerfile
@@ -8,6 +8,30 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    env_file:
+      - .env.local
+
+  dara_portfolio_1:
+    image: portfolio-portfolio:latest
+    container_name: dara-portfolio-1
+    restart: unless-stopped
+    ports:
+      - "3001:3000"  # map host 3001 to container 3000
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    env_file:
+      - .env.local
+
+  dara_portfolio_2:
+    image: portfolio-portfolio:latest
+    container_name: dara-portfolio-2
+    restart: unless-stopped
+    ports:
+      - "3002:3000"  # map host 3002 to container 3000
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
