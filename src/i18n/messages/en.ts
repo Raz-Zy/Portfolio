@@ -26,7 +26,7 @@ export const en = {
   },
 
   hero: {
-    role: 'Aspiring Developer & Creative Designer',
+    role: 'Full Stack Developer & Creative Designer',
     tagline:
       "Passionate about creating beautiful, functional digital experiences through code and design. Let's build something amazing together.",
     viewWork: 'View My Work',
