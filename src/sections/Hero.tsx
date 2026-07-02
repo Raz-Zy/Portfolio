@@ -2,10 +2,44 @@
 
 import { motion } from 'framer-motion'
 import { FaArrowDown, FaEnvelope, FaEye, FaGithub, FaFacebook, FaTelegram } from 'react-icons/fa'
+import { useTranslation } from '@/i18n/useTranslation'
+
+// Timing: the black->white intro curtain plays first, then content reveals.
+const INTRO = 1.0 // seconds the curtain takes before text starts
+const EASE_OUT = [0.22, 1, 0.36, 1] as const
+
+// Slide a block in from the left after the curtain lifts.
+const slideInLeft = (delay: number) => ({
+  initial: { opacity: 0, x: -60 },
+  animate: { opacity: 1, x: 0 },
+  transition: { duration: 0.7, delay, ease: EASE_OUT },
+})
 
 export default function Hero() {
+  const { t } = useTranslation()
   return (
     <section className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 relative overflow-hidden transition-colors duration-300 mt-20">
+      {/* Intro curtain: a black circle appears in the middle of a white screen,
+          scales up to fill the screen, then fades black -> white to reveal the
+          hero. White backdrop fades out last so it blends into the page. */}
+      <motion.div
+        className="fixed inset-0 z-[100] pointer-events-none flex items-center justify-center bg-white"
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 0.25, delay: INTRO - 0.2, ease: 'easeInOut' }}
+      >
+        <motion.div
+          className="w-[150vmax] h-[150vmax] rounded-full bg-black"
+          initial={{ scale: 0, opacity: 1 }}
+          animate={{ scale: [0, 1, 1], opacity: [1, 1, 0] }}
+          transition={{
+            duration: INTRO - 0.1,
+            times: [0, 0.55, 1],
+            ease: 'easeInOut',
+          }}
+        />
+      </motion.div>
+
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full blur-3xl animate-float opacity-60"></div>
@@ -13,37 +47,33 @@ export default function Hero() {
         <div className="absolute top-1/2 left-1/4 w-40 h-40 bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 rounded-full blur-2xl animate-float opacity-40"></div>
         <div className="absolute bottom-1/3 right-1/3 w-60 h-60 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full blur-2xl animate-float-delay opacity-40"></div>
       </div>
-      
+
       {/* Grid Pattern */}
       <div className="absolute inset-0 opacity-15 dark:opacity-10">
         <div className="w-full h-full bg-grid-pattern bg-grid-size"></div>
       </div>
-      
+
       <div className="container mx-auto px-6 text-center relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="mb-8"
-        >
+        <div className="mb-8">
           {/* Enhanced Profile Image */}
-          <motion.div 
+          <motion.div
             className="w-80 h-80 mx-auto mb-4 relative"
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: INTRO + 0.1, ease: EASE_OUT }}
           >
             {/* Floating Animation Container */}
             <motion.div
               className="relative w-full h-full"
-              animate={{ 
+              animate={{
                 y: [0, -15, 0],
                 rotate: [0, 2, -2, 0]
               }}
-              transition={{ 
+              transition={{
                 duration: 4,
                 repeat: Infinity,
-                ease: "easeInOut"
+                ease: "easeInOut",
+                delay: INTRO + 0.9,
               }}
             >
               {/* Gradient Background Ring */}
@@ -59,48 +89,48 @@ export default function Hero() {
                   />
                 </div>
               </div>
-              
+
               {/* Floating Shadow */}
               <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-48 h-12 bg-gradient-to-r from-transparent via-purple-500/30 to-transparent dark:via-purple-400/30 rounded-full blur-md opacity-60"></div>
-              
+
               {/* Glowing Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-orange-500/20 dark:from-purple-400/20 dark:via-pink-400/20 dark:to-orange-400/20 rounded-full blur-lg animate-pulse -z-10"></div>
-              
+
               {/* Sparkle Effects */}
               <motion.div
                 className="absolute -top-2 -right-2 w-3 h-3 bg-gradient-to-br from-white to-yellow-200 dark:from-yellow-200 dark:to-white rounded-full opacity-80"
-                animate={{ 
+                animate={{
                   scale: [1, 1.5, 1],
                   opacity: [0.8, 1, 0.8]
                 }}
-                transition={{ 
+                transition={{
                   duration: 2,
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
               />
-              
+
               <motion.div
                 className="absolute -bottom-2 -left-2 w-2 h-2 bg-gradient-to-br from-white to-blue-200 dark:from-blue-200 dark:to-white rounded-full opacity-70"
-                animate={{ 
+                animate={{
                   scale: [1, 1.3, 1],
                   opacity: [0.7, 1, 0.7]
                 }}
-                transition={{ 
+                transition={{
                   duration: 2.5,
                   repeat: Infinity,
                   ease: "easeInOut",
                   delay: 0.5
                 }}
               />
-              
+
               <motion.div
                 className="absolute top-4 -left-4 w-1.5 h-1.5 bg-gradient-to-br from-white to-pink-200 dark:from-pink-200 dark:to-white rounded-full opacity-60"
-                animate={{ 
+                animate={{
                   scale: [1, 1.4, 1],
                   opacity: [0.6, 1, 0.6]
                 }}
-                transition={{ 
+                transition={{
                   duration: 3,
                   repeat: Infinity,
                   ease: "easeInOut",
@@ -109,69 +139,73 @@ export default function Hero() {
               />
             </motion.div>
           </motion.div>
-          
-          <motion.h1 
-            className="text-4xl md:text-6xl font-bold mb-4 text-gray-900 dark:text-white"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <span className="text-gradient">Tan Dara</span>
-          </motion.h1>
-          
-          <motion.p 
-            className="text-xl md:text-2xl mb-4 text-gray-700 dark:text-gray-300 font-medium"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            Aspiring Developer & Creative Designer
-          </motion.p>
-          
-          <motion.p 
-            className="text-lg xl:text-lg 2xl:text-2xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            Passionate about creating beautiful, functional digital experiences through code and design. 
-            Let's build something amazing together.
-          </motion.p>
-        </motion.div>
-        
+
+          {/* Name with reveal animation (slides up from behind a mask) */}
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 text-gray-900 dark:text-white">
+            <span className="block overflow-hidden pb-2">
+              <motion.span
+                className="block text-gradient"
+                initial={{ y: '110%' }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.8, delay: INTRO + 0.25, ease: EASE_OUT }}
+              >
+                Tan Dara
+              </motion.span>
+            </span>
+          </h1>
+
+          <div className="overflow-hidden mb-4">
+            <motion.p
+              className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-medium"
+              initial={{ y: '120%' }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.7, delay: INTRO + 0.7, ease: EASE_OUT }}
+            >
+              {t('hero.role')}
+            </motion.p>
+          </div>
+
+          <div className="overflow-hidden max-w-2xl mx-auto">
+            <motion.p
+              className="text-lg xl:text-lg 2xl:text-2xl text-gray-600 dark:text-gray-400 leading-relaxed"
+              initial={{ y: '120%' }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.7, delay: INTRO + 1.0, ease: EASE_OUT }}
+            >
+              {t('hero.tagline')}
+            </motion.p>
+          </div>
+        </div>
+
         {/* Enhanced Action Buttons */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
+          {...slideInLeft(INTRO + 1.3)}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-4"
         >
-          <motion.button 
+          <motion.button
             onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
             className="bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-500 dark:to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:from-purple-700 hover:to-pink-700 dark:hover:from-purple-600 dark:hover:to-pink-600 transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <FaEye />
-            View My Work
+            {t('hero.viewWork')}
           </motion.button>
-          
-          <motion.button 
+
+          <motion.button
             onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
             className="bg-white dark:bg-gray-800 border-2 border-purple-600 dark:border-purple-400 text-purple-600 dark:text-purple-400 px-6 py-3 rounded-full font-semibold hover:bg-purple-600 hover:text-white dark:hover:bg-purple-600 dark:hover:text-white transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <FaEnvelope />
-            Contact Me
+            {t('hero.contactMe')}
           </motion.button>
         </motion.div>
-        
+
         {/* Social Links */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
+          {...slideInLeft(INTRO + 1.5)}
           className="flex justify-center gap-6 mb-2"
         >
           <motion.a
@@ -202,20 +236,20 @@ export default function Hero() {
             <FaTelegram size={20} />
           </motion.a>
         </motion.div>
-        
+
         {/* Scroll Indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
+          transition={{ duration: 0.8, delay: INTRO + 1.7 }}
           className="flex flex-col items-center gap-3"
         >
-          <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Scroll Down to Explore</p>
-          <motion.div 
+          <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">{t('hero.scroll')}</p>
+          <motion.div
             className="w-6 h-10 border-2 border-gray-300 dark:border-gray-600 rounded-full flex justify-center bg-gray-50 dark:bg-gray-800/50 shadow-inner"
             whileHover={{ scale: 1.1 }}
           >
-            <motion.div 
+            <motion.div
               className="w-1.5 h-3 bg-gradient-to-b from-purple-500 to-pink-500 dark:from-purple-400 dark:to-pink-400 rounded-full mt-2"
               animate={{ y: [0, 16, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}

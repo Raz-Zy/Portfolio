@@ -8,7 +8,21 @@ html {
 }
 
 body {
-  font-family: system-ui, sans-serif;
+  /* Noto Sans Khmer first so Khmer renders; Latin falls through to system-ui. */
+  font-family: var(--font-khmer), system-ui, sans-serif;
+}
+
+/* Khmer script stacks diacritics; give it room so glyphs aren't clipped.
+   Activated by the `lang` attribute the LocaleProvider sets on <html>. */
+html[lang='km'] body {
+  line-height: 1.9;
+  letter-spacing: 0.01em;
+}
+
+html[lang='km'] h1,
+html[lang='km'] h2,
+html[lang='km'] h3 {
+  line-height: 1.5;
 }
 
 /* Custom scrollbar */

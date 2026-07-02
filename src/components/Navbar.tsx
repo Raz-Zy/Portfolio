@@ -3,25 +3,29 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { FaHome, FaUser, FaGraduationCap, FaCog, FaPaintBrush, FaGithub, FaBriefcase, FaEnvelope, FaSun, FaMoon } from 'react-icons/fa'
+import { useTranslation } from '@/i18n/useTranslation'
+import LanguageToggle from '@/components/LanguageToggle'
 
 interface NavItem {
   id: string
-  label: string
   icon: React.ReactNode
 }
 
+// `id`s are the anchor contract with page.tsx and sitemap.ts — do NOT translate
+// them. Labels come from t(`nav.${id}`).
 const navItems: NavItem[] = [
-  { id: 'hero', label: 'Home', icon: <FaHome /> },
-  { id: 'about', label: 'About', icon: <FaUser /> },
-  { id: 'education', label: 'Education', icon: <FaGraduationCap /> },
-  { id: 'skills', label: 'Skills', icon: <FaCog /> },
-  { id: 'design', label: 'UX/UI Design', icon: <FaPaintBrush /> },
-  { id: 'github', label: 'GitHub', icon: <FaGithub /> },
-  { id: 'experience', label: 'Experience', icon: <FaBriefcase /> },
-  { id: 'contact', label: 'Contact', icon: <FaEnvelope /> },
+  { id: 'hero', icon: <FaHome /> },
+  { id: 'about', icon: <FaUser /> },
+  { id: 'education', icon: <FaGraduationCap /> },
+  { id: 'skills', icon: <FaCog /> },
+  { id: 'design', icon: <FaPaintBrush /> },
+  { id: 'github', icon: <FaGithub /> },
+  { id: 'experience', icon: <FaBriefcase /> },
+  { id: 'contact', icon: <FaEnvelope /> },
 ]
 
 export default function Navbar() {
+  const { t } = useTranslation()
   const [activeSection, setActiveSection] = useState('hero')
   const [isScrolled, setIsScrolled] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
@@ -112,7 +116,7 @@ export default function Navbar() {
               className="text-2xl font-bold text-gradient cursor-pointer"
               onClick={() => scrollToSection('hero')}
             >
-              Portfolio
+              {t('nav.logo')}
             </motion.div>
 
             {/* Desktop Navigation */}
@@ -130,17 +134,17 @@ export default function Navbar() {
                   }`}
                 >
                   <span className="text-sm">{item.icon}</span>
-                  <span className="font-medium">{item.label}</span>
+                  <span className="font-medium">{t(`nav.${item.id}`)}</span>
                 </motion.button>
               ))}
-              
+
               {/* Dark Mode Toggle */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={toggleDarkMode}
                 className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700"
-                aria-label="Toggle dark mode"
+                aria-label={t('nav.toggleDarkMode')}
               >
                 {darkMode ? (
                   <FaSun className="text-yellow-500 text-sm" />
@@ -148,6 +152,9 @@ export default function Navbar() {
                   <FaMoon className="text-gray-700 text-sm" />
                 )}
               </motion.button>
+
+              {/* Language Toggle */}
+              <LanguageToggle />
             </div>
 
             {/* Mobile Menu Button */}
@@ -157,7 +164,7 @@ export default function Navbar() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveSection(activeSection === 'menu' ? 'hero' : 'menu')}
                 className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
-                aria-label={activeSection === 'menu' ? 'Close menu' : 'Open menu'}
+                aria-label={activeSection === 'menu' ? t('nav.closeMenu') : t('nav.openMenu')}
               >
                 <div className="w-6 h-6 flex flex-col justify-center items-center relative">
                   {/* Top line */}
@@ -225,14 +232,14 @@ export default function Navbar() {
               className="flex items-center space-x-3 px-8 py-4 rounded-full text-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               <span>{item.icon}</span>
-              <span>{item.label}</span>
+              <span>{t(`nav.${item.id}`)}</span>
             </motion.button>
           ))}
-          
+
           {/* Mobile Dark Mode Toggle */}
           <motion.button
             initial={{ opacity: 0, y: 20 }}
-            animate={{ 
+            animate={{
               opacity: activeSection === 'menu' ? 1 : 0,
               y: activeSection === 'menu' ? 0 : 20
             }}
@@ -241,8 +248,20 @@ export default function Navbar() {
             className="flex items-center space-x-3 px-8 py-4 rounded-full text-xl font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
             <span>{darkMode ? <FaSun /> : <FaMoon />}</span>
-            <span>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
+            <span>{darkMode ? t('nav.lightMode') : t('nav.darkMode')}</span>
           </motion.button>
+
+          {/* Mobile Language Toggle */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{
+              opacity: activeSection === 'menu' ? 1 : 0,
+              y: activeSection === 'menu' ? 0 : 20
+            }}
+            transition={{ duration: 0.3, delay: (navItems.length + 1) * 0.1 }}
+          >
+            <LanguageToggle variant="full" />
+          </motion.div>
         </div>
       </motion.div>
 
@@ -260,15 +279,15 @@ export default function Navbar() {
                     ? 'bg-purple-600 shadow-lg'
                     : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400'
                 }`}
-                aria-label={item.label}
+                aria-label={t(`nav.${item.id}`)}
               />
-              
+
               {/* Simple Tooltip */}
               <div className="absolute right-5 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
                 <div className="bg-gray-900 dark:bg-gray-800 text-white dark:text-gray-100 px-3 py-2 rounded-lg text-sm font-medium shadow-lg whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <span className="text-xs">{item.icon}</span>
-                    <span>{item.label}</span>
+                    <span>{t(`nav.${item.id}`)}</span>
                   </div>
                   {/* Arrow */}
                   <div className="absolute left-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-l-gray-900 dark:border-l-gray-800"></div>

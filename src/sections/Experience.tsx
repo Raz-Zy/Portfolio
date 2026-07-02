@@ -2,67 +2,13 @@
 
 import { motion } from 'framer-motion'
 import { FaBriefcase, FaCalendarAlt, FaMapMarkerAlt, FaExternalLinkAlt } from 'react-icons/fa'
+import { useTranslation } from '@/i18n/useTranslation'
 
-interface ExperienceItem {
-  title: string
-  company: string
-  type: string
-  duration: string
-  location: string
-  description: string[]
-  technologies?: string[]
-  link?: string
-}
-
-const experienceData: ExperienceItem[] = [
-  {
-    title: "Computer Teacher",
-    company: "Educational Institution",
-    type: "Full-time",
-    duration: "Aug 2022 - Mar 2025",
-    location: "Cambodia",
-    description: [
-      "Served as a computer teacher, gaining valuable experience in my first professional role",
-      "Developed effective teaching methodologies to help students understand complex concepts",
-      "Learned how to explain technical concepts clearly and adapt to different learning styles",
-      "Built strong communication skills while managing classroom environments",
-      "Mentored students in computer literacy and basic programming concepts"
-    ],
-    technologies: ["Microsoft Office", "Windows", "Educational Software", "Basic Programming"]
-  },
-  {
-    title: "Computer Repair Technician",
-    company: "Freelance",
-    type: "Contract",
-    duration: "Ongoing",
-    location: "Cambodia",
-    description: [
-      "Provided technical support and computer repair services to customers",
-      "Specialized in Windows setup, configuration, and troubleshooting",
-      "Diagnosed and resolved hardware and software issues for desktops and laptops",
-      "Delivered excellent customer service while explaining technical problems in simple terms",
-      "Gained hands-on experience with various computer hardware and software systems"
-    ],
-    technologies: ["Windows OS", "Hardware Troubleshooting", "Software Installation", "System Diagnostics"]
-  },
-  {
-    title: "Software Developer",
-    company: "Personal Projects",
-    type: "Project-based",
-    duration: "2023 - Present",
-    location: "Cambodia",
-    description: [
-      "Developed Assessify - An employee evaluation system to streamline performance assessments",
-      "Created ZenTrio - A comprehensive task management system for improved productivity",
-      "Built PipeJet - A platform for automated deployment processes",
-      "Gained experience in full-stack development and project management",
-      "Applied modern development practices and technologies in real-world applications"
-    ],
-    technologies: ["React", "Node.js", "JavaScript", "Database Management", "Deployment Automation"]
-  }
-]
+// Optional external links per experience (index-aligned with experience.items).
+const experienceLinks: (string | undefined)[] = [undefined, undefined, undefined]
 
 export default function Experience() {
+  const { t, m } = useTranslation()
   return (
     <section className="py-20 bg-gray-50 dark:bg-gray-800">
       <div className="container mx-auto px-6">
@@ -74,10 +20,10 @@ export default function Experience() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gradient">
-            Experience
+            {t('experience.title')}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            My professional journey and the projects that have shaped my career.
+            {t('experience.subtitle')}
           </p>
         </motion.div>
 
@@ -86,7 +32,7 @@ export default function Experience() {
             {/* Timeline line */}
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-500 to-pink-500 hidden md:block"></div>
             
-            {experienceData.map((item, index) => (
+            {m.experience.items.map((item, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
@@ -118,15 +64,15 @@ export default function Experience() {
                       </div>
                     </div>
                     
-                    {item.link && (
+                    {experienceLinks[index] && (
                       <a
-                        href={item.link}
+                        href={experienceLinks[index]}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-200 transition-colors"
                       >
                         <FaExternalLinkAlt />
-                        <span className="text-sm">View Project</span>
+                        <span className="text-sm">{t('experience.viewProject')}</span>
                       </a>
                     )}
                   </div>
@@ -156,7 +102,7 @@ export default function Experience() {
                   {item.technologies && (
                     <div>
                       <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
-                        Technologies Used:
+                        {t('experience.technologiesUsed')}
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {item.technologies.map((tech, techIndex) => (

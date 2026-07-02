@@ -4,8 +4,10 @@ import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { FaGithub, FaStar, FaCodeBranch, FaExternalLinkAlt, FaCalendar, FaCode, FaBuilding, FaUser, FaFilter, FaArrowLeft, FaChevronRight } from 'react-icons/fa'
 import { Repository, GitHubUser, Organization } from '@/types/github'
+import { useTranslation } from '@/i18n/useTranslation'
 
 export default function GitHub() {
+  const { t, locale } = useTranslation()
   const [repositories, setRepositories] = useState<Repository[]>([])
   const [user, setUser] = useState<GitHubUser | null>(null)
   const [organizations, setOrganizations] = useState<Organization[]>([])
@@ -98,7 +100,7 @@ export default function GitHub() {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(locale === 'km' ? 'km-KH' : 'en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -170,13 +172,13 @@ export default function GitHub() {
                       </h3>
                       <div className="flex items-center gap-1 flex-shrink-0">
                         {getRepositoryType(repo) === 'personal' ? (
-                          <FaUser className="text-green-500" size={12} title="Personal Repository" />
+                          <FaUser className="text-green-500" size={12} title={t('github.personalRepoTitle')} />
                         ) : (
-                          <FaBuilding className="text-blue-500" size={12} title="Organization Repository" />
+                          <FaBuilding className="text-blue-500" size={12} title={t('github.orgRepoTitle')} />
                         )}
                         {repo.private && (
                           <span className="text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-full whitespace-nowrap">
-                            Private
+                            {t('github.private')}
                           </span>
                         )}
                       </div>
@@ -196,7 +198,7 @@ export default function GitHub() {
                 </div>
                 
                 <p className="text-gray-600 dark:text-gray-300 mb-3 sm:mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2">
-                  {repo.description || 'No description available'}
+                  {repo.description || t('github.noDescription')}
                 </p>
                 
                 {repo.topics && repo.topics.length > 0 && (
@@ -255,7 +257,7 @@ export default function GitHub() {
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-300">Loading GitHub data...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-300">{t('github.loading')}</p>
           </div>
         </div>
       </section>
@@ -274,10 +276,10 @@ export default function GitHub() {
             className="text-center mb-12 sm:mb-16"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 text-gradient">
-              GitHub Portfolio
+              {t('github.title')}
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
-              Explore my latest projects and contributions on GitHub
+              {t('github.subtitle')}
             </p>
             {/* Debug info - remove in production */}
             {debugInfo && (
@@ -300,8 +302,8 @@ export default function GitHub() {
             <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
               <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden shadow-lg flex-shrink-0">
                 <img 
-                  src={user.avatar_url} 
-                  alt={user.name}
+                  src={user.avatar_url}
+                  alt={user.name || `${user.login} GitHub avatar`}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -318,19 +320,19 @@ export default function GitHub() {
                     <div className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">
                       {user.public_repos}
                     </div>
-                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Repositories</div>
+                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{t('github.repositories')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">
                       {user.followers}
                     </div>
-                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Followers</div>
+                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{t('github.followers')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">
                       {organizations.length}
                     </div>
-                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Organizations</div>
+                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{t('github.organizationsStat')}</div>
                   </div>
                 </div>
               </div>
@@ -342,7 +344,7 @@ export default function GitHub() {
                   className="bg-gray-900 dark:bg-gray-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold hover:bg-gray-800 dark:hover:bg-gray-600 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   <FaGithub />
-                  View Profile
+                  {t('github.viewProfile')}
                 </a>
               </div>
             </div>
@@ -364,22 +366,22 @@ export default function GitHub() {
                 className="flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors text-sm sm:text-base"
               >
                 <FaArrowLeft />
-                Back to Organizations
+                {t('github.backToOrgs')}
               </button>
               <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
-                {selectedOrg} Repositories
+                {t('github.orgRepositories', { org: selectedOrg })}
               </h3>
             </div>
             
             {orgLoading ? (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600 dark:text-gray-300">Loading organization repositories...</p>
+                <p className="mt-4 text-gray-600 dark:text-gray-300">{t('github.orgLoading')}</p>
               </div>
             ) : orgRepositories.length > 0 ? (
               <div>
                 <p className="text-xs sm:text-sm text-gray-500 mb-4">
-                  Showing {orgRepositories.length} repositories
+                  {t('github.showingRepos', { count: orgRepositories.length })}
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                   {orgRepositories.map((repo, index) => renderRepositoryCard(repo, index))}
@@ -389,10 +391,10 @@ export default function GitHub() {
               <div className="text-center py-12">
                 <FaBuilding className="text-gray-400 dark:text-gray-500 text-4xl sm:text-6xl mx-auto mb-4" />
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                  No repositories found for {selectedOrg}
+                  {t('github.noReposForOrg', { org: selectedOrg })}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 px-4">
-                  This organization may not have public repositories or you may not have access to them.
+                  {t('github.noReposForOrgDesc')}
                 </p>
               </div>
             )}
@@ -419,7 +421,7 @@ export default function GitHub() {
                     }`}
                   >
                     <FaUser size={12} />
-                    <span className="truncate">Personal ({getFilteredCount('personal')})</span>
+                    <span className="truncate">{t('github.personal', { count: getFilteredCount('personal') })}</span>
                   </button>
                   <button
                     onClick={() => setFilter('organization')}
@@ -430,7 +432,7 @@ export default function GitHub() {
                     }`}
                   >
                     <FaBuilding size={12} />
-                    <span className="truncate">Organizations ({getFilteredCount('organization')})</span>
+                    <span className="truncate">{t('github.organizations', { count: getFilteredCount('organization') })}</span>
                   </button>
                 </div>
               </div>
@@ -459,8 +461,8 @@ export default function GitHub() {
                   >
                     <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
                       <img 
-                        src={org.avatar_url} 
-                        alt={org.login}
+                        src={org.avatar_url}
+                        alt={`${org.login} organization avatar`}
                         className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
@@ -469,20 +471,20 @@ export default function GitHub() {
                         </h3>
                         <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                           <FaBuilding size={10} />
-                          Organization
+                          {t('github.organizationLabel')}
                         </div>
                       </div>
                       <FaChevronRight className="text-gray-400 flex-shrink-0" size={14} />
                     </div>
                     
                     <p className="text-gray-600 dark:text-gray-300 mb-3 sm:mb-4 text-xs sm:text-sm leading-relaxed line-clamp-2">
-                      {org.description || 'No description available'}
+                      {org.description || t('github.noDescription')}
                     </p>
                     
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                         <FaExternalLinkAlt size={10} />
-                        Click to view repositories
+                        {t('github.clickToView')}
                   </div>
                 </div>
               </motion.div>
@@ -501,10 +503,12 @@ export default function GitHub() {
               >
                 <FaGithub className="text-gray-400 dark:text-gray-500 text-4xl sm:text-6xl mx-auto mb-4" />
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                  No {filter} repositories found
+                  {t('github.noFilterRepos', {
+                    filter: filter === 'personal' ? t('github.personalWord') : t('github.organizationWord'),
+                  })}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 px-4">
-                  Try switching to a different filter or check back later.
+                  {t('github.noFilterReposDesc')}
                 </p>
               </motion.div>
             )}
@@ -520,10 +524,10 @@ export default function GitHub() {
               >
                 <FaBuilding className="text-gray-400 dark:text-gray-500 text-4xl sm:text-6xl mx-auto mb-4" />
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                  No organizations found
+                  {t('github.noOrgs')}
                 </h3>
                 <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 px-4">
-                  You don't seem to be part of any organizations yet.
+                  {t('github.noOrgsDesc')}
                 </p>
               </motion.div>
             )}
@@ -552,7 +556,7 @@ export default function GitHub() {
             className="bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-500 dark:to-pink-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold hover:from-purple-700 hover:to-pink-700 dark:hover:from-purple-600 dark:hover:to-pink-600 transition-all duration-300 inline-flex items-center gap-2 shadow-lg hover:shadow-xl text-sm sm:text-base"
           >
             <FaCode />
-            View All Repositories
+            {t('github.viewAll')}
           </a>
         </motion.div>
       </div>

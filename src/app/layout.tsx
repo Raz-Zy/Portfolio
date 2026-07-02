@@ -1,6 +1,21 @@
+// i18n note: this site uses a lightweight client-side locale toggle (see
+// src/i18n/). The SEO metadata below and the server-rendered `<html lang>` stay
+// English on purpose — a client-only approach can't localize server-rendered
+// SEO. If bilingual SEO is ever required, move to locale-prefixed routing.
 import type { Metadata, Viewport } from 'next'
+import { Noto_Sans_Khmer } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
+import { LocaleProvider } from '@/i18n/LocaleProvider'
+
+// Khmer webfont. Noto Sans Khmer only carries Khmer glyphs, so Latin text
+// falls through to the system stack (see tailwind.config.js fontFamily).
+const notoKhmer = Noto_Sans_Khmer({
+  subsets: ['khmer'],
+  weight: ['400', '500', '700'],
+  variable: '--font-khmer',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Dara Portfolio | Aspiring Developer & Creative Designer',
@@ -74,10 +89,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={notoKhmer.variable}>
       <head>
         {/* Additional SEO meta tags */}
-        <link rel="canonical" href="https://dara-it.site" />
         <meta name="application-name" content="Dara Portfolio" />
         <meta name="apple-mobile-web-app-title" content="Dara Portfolio" />
         <meta name="format-detection" content="telephone=no" />
@@ -98,8 +112,9 @@ export default function RootLayout({
               "url": "https://dara-it.site",
               "image": "https://dara-it.site/images/Profile.png",
               "sameAs": [
-                "https://github.com/yourusername",
-                "https://linkedin.com/in/yourprofile",
+                "https://github.com/Raz-Zy",
+                "https://www.facebook.com/dara.tan.583",
+                "https://t.me/TanDaras"
               ],
               "knowsAbout": [
                 "Web Development",
@@ -123,8 +138,10 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-        <Navbar />
-        {children}
+        <LocaleProvider>
+          <Navbar />
+          {children}
+        </LocaleProvider>
       </body>
     </html>
   )

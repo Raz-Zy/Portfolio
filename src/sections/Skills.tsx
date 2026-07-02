@@ -22,7 +22,8 @@ import {
   FaServer,
   FaTools,
   FaChartLine,
-  FaComments
+  FaComments,
+  FaRobot
 } from 'react-icons/fa'
 import { 
   SiTailwindcss, 
@@ -33,11 +34,15 @@ import {
   SiNextdotjs,
   SiKubernetes,
   SiAnsible,
-  SiGrafana
+  SiGrafana,
+  SiOpenai,
+  SiAnthropic
 } from 'react-icons/si'
+import { useTranslation } from '@/i18n/useTranslation'
 
+// Visual config only — category titles come from messages (skills.categories),
+// index-aligned with this array. Skill names/levels are locale-invariant.
 interface SkillCategory {
-  title: string
   icon: React.ReactNode
   color: string
   skills: Array<{
@@ -47,15 +52,13 @@ interface SkillCategory {
   }>
 }
 
+// Icons only — names/descriptions come from messages (skills.soft), index-aligned.
 interface SoftSkill {
-  name: string
   icon: React.ReactNode
-  description: string
 }
 
 const hardSkillsData: SkillCategory[] = [
   {
-    title: "Programming",
     icon: <FaCode />,
     color: "from-blue-500 to-purple-600",
     skills: [
@@ -69,7 +72,6 @@ const hardSkillsData: SkillCategory[] = [
     ]
   },
   {
-    title: "DevOps Engineering",
     icon: <FaServer />,
     color: "from-orange-500 to-red-600",
     skills: [
@@ -78,11 +80,11 @@ const hardSkillsData: SkillCategory[] = [
       { name: "Ansible", icon: <SiAnsible />, level: 85 },
       { name: "Docker (Advanced)", icon: <FaDocker />, level: 90 },
       { name: "Grafana", icon: <SiGrafana />, level: 80 },
-      { name: "Kubernetes", icon: <SiKubernetes />, level: 85 }
+      { name: "Kubernetes", icon: <SiKubernetes />, level: 85 },
+      { name: "Nagios", icon: <FaChartLine />, level: 65 }
     ]
   },
   {
-    title: "Graphic Design",
     icon: <FaPaintBrush />,
     color: "from-pink-500 to-rose-600",
     skills: [
@@ -92,7 +94,6 @@ const hardSkillsData: SkillCategory[] = [
     ]
   },
   {
-    title: "Video Editing",
     icon: <FaVideo />,
     color: "from-green-500 to-teal-600",
     skills: [
@@ -100,21 +101,32 @@ const hardSkillsData: SkillCategory[] = [
       { name: "After Effects", icon: <SiAdobeaftereffects />, level: 80 },
       { name: "Sony Vegas", icon: <FaVideo />, level: 75 }
     ]
+  },
+  {
+    icon: <FaRobot />,
+    color: "from-cyan-500 to-blue-600",
+    skills: [
+      { name: "ChatGPT", icon: <SiOpenai />, level: 90 },
+      { name: "Claude AI", icon: <SiAnthropic />, level: 90 },
+      { name: "Claude Code", icon: <SiAnthropic />, level: 90 },
+      { name: "Cursor", icon: <FaRobot />, level: 90 }
+    ]
   }
 ]
 
 const softSkillsData: SoftSkill[] = [
-  { name: "Flexibility", icon: <FaLightbulb />, description: "Adapting to new challenges" },
-  { name: "Time Management", icon: <FaClock />, description: "Efficient task prioritization" },
-  { name: "Adaptability", icon: <FaUsers />, description: "Thriving in changing environments" },
-  { name: "Problem-Solving", icon: <FaPuzzlePiece />, description: "Creative solution finding" },
-  { name: "Communication", icon: <FaComments />, description: "Clear and effective interaction" },
-  { name: "Creativity", icon: <FaHeart />, description: "Innovative thinking approach" },
-  { name: "Focus", icon: <FaEye />, description: "Sustained attention to detail" },
-  { name: "Confidence", icon: <FaHandshake />, description: "Self-assured decision making" }
+  { icon: <FaLightbulb /> },
+  { icon: <FaClock /> },
+  { icon: <FaUsers /> },
+  { icon: <FaPuzzlePiece /> },
+  { icon: <FaComments /> },
+  { icon: <FaHeart /> },
+  { icon: <FaEye /> },
+  { icon: <FaHandshake /> },
 ]
 
 export default function Skills() {
+  const { t, m } = useTranslation()
   return (
     <section className="py-20 bg-white dark:bg-gray-900">
       <div className="container mx-auto px-6">
@@ -126,19 +138,19 @@ export default function Skills() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gradient">
-            Skills & Expertise
+            {t('skills.title')}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            A comprehensive overview of my technical abilities and personal strengths.
+            {t('skills.subtitle')}
           </p>
         </motion.div>
 
         {/* Hard Skills */}
         <div className="mb-20">
           <h3 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
-            Technical Skills
+            {t('skills.technicalTitle')}
           </h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8 items-start">
             {hardSkillsData.map((category, categoryIndex) => (
               <motion.div
                 key={categoryIndex}
@@ -153,7 +165,7 @@ export default function Skills() {
                     {category.icon}
                   </div>
                   <h4 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {category.title}
+                    {m.skills.categories[categoryIndex]}
                   </h4>
                 </div>
                 
@@ -193,7 +205,7 @@ export default function Skills() {
         {/* Soft Skills */}
         <div>
           <h3 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
-            Soft Skills
+            {t('skills.softTitle')}
           </h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {softSkillsData.map((skill, index) => (
@@ -209,10 +221,10 @@ export default function Skills() {
                   {skill.icon}
                 </div>
                 <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {skill.name}
+                  {m.skills.soft[index].name}
                 </h5>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {skill.description}
+                  {m.skills.soft[index].description}
                 </p>
               </motion.div>
             ))}

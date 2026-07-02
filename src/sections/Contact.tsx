@@ -1,10 +1,11 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useTranslation } from "@/i18n/useTranslation";
 import {
   FaEnvelope,
   FaFacebook,
@@ -21,26 +22,35 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 
-// Zod validation schema
-const contactSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Name is required")
-    .max(100, "Name must be less than 100 characters")
-    .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Please enter a valid email address")
-    .max(254, "Email address is too long"), // RFC 5321 limit
-  message: z
-    .string()
-    .min(1, "Message is required")
-    .min(10, "Message must be at least 10 characters")
-    .max(2000, "Message must be less than 2000 characters for email compatibility"),
-});
+// Zod schema is built inside the component from the active locale's messages so
+// validation errors are translated. `t` is the translation function.
+type Translate = (path: string, vars?: Record<string, string | number>) => string;
 
-type ContactFormData = z.infer<typeof contactSchema>;
+const buildContactSchema = (t: Translate) =>
+  z.object({
+    name: z
+      .string()
+      .min(1, t("contact.validation.nameRequired"))
+      .max(100, t("contact.validation.nameMax"))
+      .regex(/^[a-zA-Z\s]+$/, t("contact.validation.nameRegex")),
+    email: z
+      .string()
+      .min(1, t("contact.validation.emailRequired"))
+      .email(t("contact.validation.emailInvalid"))
+      .max(254, t("contact.validation.emailMax")), // RFC 5321 limit
+    message: z
+      .string()
+      .min(1, t("contact.validation.messageRequired"))
+      .min(10, t("contact.validation.messageMin"))
+      .max(2000, t("contact.validation.messageMax")),
+  });
+
+// Stable form-data type, independent of the locale-specific schema instance.
+type ContactFormData = {
+  name: string;
+  email: string;
+  message: string;
+};
 
 interface ModalProps {
   isOpen: boolean;
@@ -52,6 +62,7 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, type, title, message, timeLeft }) => {
+  const { t } = useTranslation();
   return (
     <AnimatePresence>
       {isOpen && (
@@ -108,7 +119,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, type, title, message, ti
                 <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 rounded-lg p-3 mb-6">
                   <div className="flex items-center justify-center gap-2 text-orange-700 dark:text-orange-300">
                     <FaClock />
-                    <span className="font-medium">Next message in: {timeLeft}</span>
+                    <span className="font-medium">{t('contact.modal.nextMessageIn', { time: timeLeft ?? '' })}</span>
                   </div>
                 </div>
               )}
@@ -122,7 +133,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, type, title, message, ti
                     : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white'
                 }`}
               >
-                {type === 'success' ? 'Great!' : 'Got it'}
+                {type === 'success' ? t('contact.modal.great') : t('contact.modal.gotIt')}
               </button>
             </div>
           </motion.div>
@@ -133,6 +144,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, type, title, message, ti
 };
 
 export default function Contact() {
+  const { t, locale } = useTranslation();
   const [canSendMessage, setCanSendMessage] = useState(true);
   const [timeUntilNextMessage, setTimeUntilNextMessage] = useState<string>("");
   const [modal, setModal] = useState<{
@@ -147,6 +159,9 @@ export default function Contact() {
     title: '',
     message: '',
   });
+
+  // Rebuild the schema when the locale changes so error messages are translated.
+  const contactSchema = useMemo(() => buildContactSchema(t), [locale]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // React Hook Form setup
   const {
@@ -223,8 +238,8 @@ export default function Contact() {
     if (!canSendMessage) {
       showModal(
         'error',
-        'Rate Limit Reached',
-        'You can only send one message per day to prevent spam. Please wait before sending another message.',
+        t('contact.modal.rateLimitTitle'),
+        t('contact.modal.rateLimitBody'),
         timeUntilNextMessage
       );
       return;
@@ -252,8 +267,8 @@ export default function Contact() {
     // Show success modal
     showModal(
       'success',
-      'Message Sent!',
-      'Thank you for your message! Your email client will open to send the message. I\'ll get back to you as soon as possible.'
+      t('contact.modal.successTitle'),
+      t('contact.modal.successBody')
     );
     
     reset(); // Reset form
@@ -297,10 +312,10 @@ export default function Contact() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gradient">
-            Get In Touch
+            {t('contact.title')}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Ready to collaborate or have a question? I'd love to hear from you.
+            {t('contact.subtitle')}
           </p>
         </motion.div>
 
@@ -315,12 +330,10 @@ export default function Contact() {
           >
             <div>
               <h3 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-                Let's Connect
+                {t('contact.connectTitle')}
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                I'm always open to discussing new opportunities, creative ideas,
-                or potential collaborations. Whether you have a project in mind
-                or just want to say hello, feel free to reach out!
+                {t('contact.connect')}
               </p>
             </div>
 
@@ -331,7 +344,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white">
-                    Email
+                    {t('contact.emailLabel')}
                   </h4>
                   <a
                     href="mailto:tandara120403@gmail.com"
@@ -348,7 +361,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white">
-                    Phone
+                    {t('contact.phoneLabel')}
                   </h4>
                   <a
                     href="tel:+1234567890"
@@ -365,10 +378,10 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white">
-                    Location
+                    {t('contact.locationLabel')}
                   </h4>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Phnom Penh, Cambodia
+                    {t('contact.locationValue')}
                   </p>
                 </div>
               </div>
@@ -377,7 +390,7 @@ export default function Contact() {
             {/* Social Links */}
             <div className="pt-8">
               <h4 className="font-semibold text-gray-900 dark:text-white mb-4">
-                Follow Me
+                {t('contact.followMe')}
               </h4>
               <div className="flex gap-4">
                 <a
@@ -421,7 +434,7 @@ export default function Contact() {
                 className="w-fit flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 <FaDownload />
-                Download Resume
+                {t('contact.downloadResume')}
               </a>
             </div>
           </motion.div>
@@ -435,7 +448,7 @@ export default function Contact() {
             className="bg-gray-50 dark:bg-gray-800 p-8 rounded-2xl shadow-lg card-hover"
           >
             <h3 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-              Send Message
+              {t('contact.sendTitle')}
             </h3>
 
             {/* Rate Limiting Notice */}
@@ -443,11 +456,10 @@ export default function Contact() {
               <div className="mb-6 p-4 bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-700 rounded-lg">
                 <div className="flex items-center gap-2 text-orange-700 dark:text-orange-300">
                   <FaClock />
-                  <span className="font-medium">Rate Limit</span>
+                  <span className="font-medium">{t('contact.rateLimitLabel')}</span>
                 </div>
                 <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
-                  You can send another message in {timeUntilNextMessage}. This
-                  helps prevent spam.
+                  {t('contact.rateLimitNotice', { time: timeUntilNextMessage })}
                 </p>
               </div>
             )}
@@ -459,7 +471,7 @@ export default function Contact() {
                   htmlFor="name"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
-                  Your Name
+                  {t('contact.nameLabel')}
                 </label>
                 <input
                   {...register("name")}
@@ -471,7 +483,7 @@ export default function Contact() {
                       ? 'border-red-500 dark:border-red-500' 
                       : 'border-gray-300 dark:border-gray-600'
                   }`}
-                  placeholder="John Doe"
+                  placeholder={t('contact.namePlaceholder')}
                 />
                 <div className="flex justify-between items-center mt-1">
                   {errors.name && (
@@ -492,7 +504,7 @@ export default function Contact() {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
-                  Email Address
+                  {t('contact.emailAddressLabel')}
                 </label>
                 <input
                   {...register("email")}
@@ -504,7 +516,7 @@ export default function Contact() {
                       ? 'border-red-500 dark:border-red-500' 
                       : 'border-gray-300 dark:border-gray-600'
                   }`}
-                  placeholder="john@example.com"
+                  placeholder={t('contact.emailPlaceholder')}
                 />
                 <div className="flex justify-between items-center mt-1">
                   {errors.email && (
@@ -525,7 +537,7 @@ export default function Contact() {
                   htmlFor="message"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
-                  Message
+                  {t('contact.messageLabel')}
                 </label>
                 <textarea
                   {...register("message")}
@@ -537,7 +549,7 @@ export default function Contact() {
                       ? 'border-red-500 dark:border-red-500' 
                       : 'border-gray-300 dark:border-gray-600'
                   }`}
-                  placeholder="Tell me about your project or just say hello..."
+                  placeholder={t('contact.messagePlaceholder')}
                 />
                 <div className="flex justify-between items-center mt-1">
                   {errors.message && (
@@ -559,8 +571,8 @@ export default function Contact() {
               >
                 <FaPaperPlane />
                 {canSendMessage
-                  ? "Send Message"
-                  : `Wait ${timeUntilNextMessage}`}
+                  ? t('contact.sendButton')
+                  : t('contact.waitButton', { time: timeUntilNextMessage })}
               </button>
             </form>
           </motion.div>

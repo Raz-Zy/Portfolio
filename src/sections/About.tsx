@@ -2,8 +2,10 @@
 
 import { motion } from 'framer-motion'
 import { FaUser, FaHeart, FaLightbulb } from 'react-icons/fa'
+import { useTranslation } from '@/i18n/useTranslation'
 
 export default function About() {
+  const { t } = useTranslation()
   return (
     <section className="py-20 bg-white dark:bg-gray-900">
       <div className="container mx-auto px-6">
@@ -15,10 +17,10 @@ export default function About() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gradient">
-            About Me
+            {t('about.title')}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Get to know me better - my journey, passions, and what drives me forward.
+            {t('about.subtitle')}
           </p>
         </motion.div>
 
@@ -35,12 +37,10 @@ export default function About() {
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
                   <FaUser className="text-purple-600 dark:text-purple-400" />
                 </div>
-                <h3 className="text-xl font-semibold">My Journey</h3>
+                <h3 className="text-xl font-semibold">{t('about.journeyTitle')}</h3>
               </div>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                I'm a passionate developer and creative designer with a love for crafting beautiful, 
-                functional digital experiences. My journey began with curiosity about how things work 
-                and evolved into a deep appreciation for clean code and thoughtful design.
+                {t('about.journey')}
               </p>
             </div>
 
@@ -49,12 +49,10 @@ export default function About() {
                 <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900 rounded-full flex items-center justify-center">
                   <FaHeart className="text-pink-600 dark:text-pink-400" />
                 </div>
-                <h3 className="text-xl font-semibold">What I Love</h3>
+                <h3 className="text-xl font-semibold">{t('about.loveTitle')}</h3>
               </div>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                I'm driven by the intersection of technology and creativity. Whether it's building 
-                responsive web applications, creating stunning visual designs, or solving complex 
-                problems, I find joy in bringing ideas to life.
+                {t('about.love')}
               </p>
             </div>
           </motion.div>
@@ -71,15 +69,13 @@ export default function About() {
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center glass-effect">
                   <FaLightbulb className="text-white" />
                 </div>
-                <h3 className="text-xl font-semibold">My Philosophy</h3>
+                <h3 className="text-xl font-semibold">{t('about.philosophyTitle')}</h3>
               </div>
               <blockquote className="text-lg leading-relaxed mb-6 italic">
-                "Great design is not just about making things look good - it's about making them work beautifully."
+                {t('about.philosophyQuote')}
               </blockquote>
               <p className="text-white/90 leading-relaxed">
-                I believe in continuous learning, attention to detail, and the power of 
-                collaboration. Every project is an opportunity to grow and create something 
-                meaningful that makes a positive impact.
+                {t('about.philosophy')}
               </p>
             </div>
           </motion.div>
