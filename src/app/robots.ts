@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/_next/', '/admin/'],
         },
     ],
-        sitemap: 'https://dara-it.site/sitemap.xml',
-        host: 'https://dara-it.site',
+        sitemap: 'https://tandara.site/sitemap.xml',
+        host: 'https://tandara.site',
     }
 }

@@ -29,14 +29,14 @@ export const metadata: Metadata = {
   authors: [{ name: 'Tan Dara' }],
   creator: 'Tan Dara',
   publisher: 'Tan Dara',
-  metadataBase: new URL('https://dara-it.site'),
+  metadataBase: new URL('https://tandara.site'),
   alternates: {
-    canonical: 'https://dara-it.site',
+    canonical: 'https://tandara.site',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://dara-it.site',
+    url: 'https://tandara.site',
     title: 'Dara Portfolio | Aspiring Developer & Creative Designer',
     description: 'Modern portfolio showcasing development skills, design projects, and professional experience. Specializing in web development, UX/UI design, and creative solutions.',
     siteName: 'Dara Portfolio',
@@ -109,8 +109,8 @@ export default function RootLayout({
               "name": "Tan Dara",
               "jobTitle": "Aspiring Developer & Creative Designer",
               "description": "Modern portfolio showcasing development skills, design projects, and professional experience.",
-              "url": "https://dara-it.site",
-              "image": "https://dara-it.site/images/Profile.png",
+              "url": "https://tandara.site",
+              "image": "https://tandara.site/images/Profile.png",
               "sameAs": [
                 "https://github.com/Raz-Zy",
                 "https://www.facebook.com/dara.tan.583",

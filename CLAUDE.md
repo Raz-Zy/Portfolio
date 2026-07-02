@@ -30,7 +30,7 @@ Next.js 15 App Router + TypeScript + Tailwind. Path alias `@/*` → `src/*` (see
 ### Page composition
 `src/app/page.tsx` is the entire site: it renders each section component from `src/sections/` wrapped in an `<section id="...">`. The section `id`s are the anchor targets for navigation, `sitemap.ts`, and scroll-spy. **If you add, remove, or rename a section, keep these in sync:** `page.tsx`, `src/components/Navbar.tsx` (`navItems`), and `src/app/sitemap.ts`.
 
-`src/app/layout.tsx` owns all SEO: `metadata`, `viewport`, OpenGraph/Twitter cards, and inline JSON-LD structured data. Hard-coded canonical domain is `https://dara-it.site`. The `<Navbar />` is mounted here, above `{children}`.
+`src/app/layout.tsx` owns all SEO: `metadata`, `viewport`, OpenGraph/Twitter cards, and inline JSON-LD structured data. Hard-coded canonical domain is `https://tandara.site`. The `<Navbar />` is mounted here, above `{children}`.
 
 ### Sections vs. components
 - `src/sections/` — large self-contained page sections (Hero, About, Education, Skills, UXUIDesign, GitHub, Experience, Contact). All are `'use client'` and use Framer Motion for entrance animations. Content (bio, skills, experience entries) is hard-coded as arrays/JSX inside each file — there is no CMS or data layer.

@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://dara-it.site'
+  const baseUrl = 'https://tandara.site'
   const lastModified = new Date()
 
   // Since this is a single-page application with hash routing,
