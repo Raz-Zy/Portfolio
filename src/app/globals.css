@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Figma color system (subset used by this site). The full scales live in
+   tailwind.config.js as `primary` (light sky blue) and `accent` (blue). */
+:root {
+  --primary-lightskyblue: #4FB5DB;
+  --secondary-lightskyblue-slate: #84CDE9;
+  --text-primary: #324C5B;
+  --text-secondary: #6C757D;
+  --bg-aliceblue: #EEF9FF;
+  --bg-ghostwhite: #F8F9FE;
+  --blue: #556EEB;
+  --powderblue: #9BE0E7;
+  --gradient-blue-purple: linear-gradient(135deg, #93C5FD 0%, #C4B5FD 100%);
+  --shadow-primary: 0px 0px 10px 0px rgba(0, 0, 0, 0.07);
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
@@ -35,7 +50,7 @@ html[lang='km'] h3 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4FB5DB 0%, #556EEB 100%);
   border-radius: 4px;
 }
 
@@ -49,26 +64,26 @@ html[lang='km'] h3 {
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  background: linear-gradient(135deg, #84CDE9 0%, #7C90F0 100%);
 }
 
 @layer utilities {
   .text-gradient {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4FB5DB 0%, #556EEB 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   .dark .text-gradient {
-    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    background: linear-gradient(135deg, #84CDE9 0%, #A4B6F6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   .gradient-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4FB5DB 0%, #556EEB 100%);
   }
   
   .card-hover {
@@ -77,11 +92,11 @@ html[lang='km'] h3 {
   
   .card-hover:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.12);
   }
-  
+
   .dark .card-hover:hover {
-    box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
+    box-shadow: 0px 0px 18px 0px rgba(255, 255, 255, 0.1);
   }
   
   .glass-effect {
@@ -136,6 +151,73 @@ html[lang='km'] h3 {
   .social-link:hover {
     transform: translateY(-3px) scale(1.1);
   }
+}
+
+/* Glass pill (wraps the Hero name). ::before paints the glass tint and
+   inner highlights; the element itself blurs whatever sits behind it (the
+   particle rings).
+
+   The backdrop-filter must live on the element, NOT on a pseudo-element:
+   these elements get framer-motion transforms (entrance, hover lift), and a
+   transformed element becomes the backdrop sampling boundary for its
+   children — a blur on ::before/::after would stop seeing the fixed page
+   background and silently turn off whenever a transform is active. */
+.glass-pill {
+  position: relative;
+  border-radius: 9999px;
+  z-index: 0;
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
+}
+
+.glass-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: 9999px;
+  box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.9),
+    inset 0 0 3px 1px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(79, 181, 219, 0.2);
+  background-color: rgba(79, 181, 219, 0.08);
+}
+
+.dark .glass-pill::before {
+  box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7),
+    inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
+  background-color: rgb(255 255 255 / 10%);
+}
+
+/* Glass card — same construction as .glass-pill but white-tinted and
+   with the radius inherited from the element (use Tailwind rounded-* on the
+   card). Used by cards in the transparent sections (Education, Design,
+   Experience, Contact) so the fixed cosmic background blurs behind them.
+   Blur on the element itself, not a pseudo — see .glass-pill note. */
+.glass-card {
+  position: relative;
+  z-index: 0;
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.9),
+    inset 0 0 3px 1px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  background-color: rgb(255 255 255 / 20%);
+}
+
+.dark .glass-card::before {
+  box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7),
+    inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
+  background-color: rgb(255 255 255 / 10%);
 }
 
 @keyframes float {

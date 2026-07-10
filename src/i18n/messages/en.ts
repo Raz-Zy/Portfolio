@@ -8,11 +8,12 @@
 
 export const en = {
   nav: {
-    logo: 'Portfolio',
+    logo: 'Tan Dara',
     hero: 'Home',
     about: 'About',
     education: 'Education',
     skills: 'Skills',
+    ax: 'AI Transformation',
     design: 'UX/UI Design',
     github: 'GitHub',
     experience: 'Experience',
@@ -26,7 +27,8 @@ export const en = {
   },
 
   hero: {
-    role: 'Full Stack Developer & Creative Designer',
+    name: 'Tan Dara',
+    role: 'Full Stack Developer - AX engineer/designer - Creative Designer',
     tagline:
       "Passionate about creating beautiful, functional digital experiences through code and design. Let's build something amazing together.",
     viewWork: 'View My Work',
@@ -117,6 +119,74 @@ export const en = {
       { name: 'Focus', description: 'Sustained attention to detail' },
       { name: 'Confidence', description: 'Self-assured decision making' },
     ],
+  },
+
+  ax: {
+    title: 'AI Transformation (AX)',
+    subtitle:
+      'Beyond using AI tools — I engineer AI-native development environments, building Claude Code infrastructure that turns an AI assistant into a governed, project-aware engineering teammate.',
+    // Parallel to statValues in AXTransformation.tsx (labels only).
+    stats: ['Days', 'Commits', 'Subagents', 'Skills', 'Quality Hooks'],
+    structureTitle: 'monorepo & AI architecture',
+    // Captions for the 3 scroll-journey stages in AXTransformation.tsx
+    // (root overview → destination/ → destination-api/).
+    stageLabels: [
+      'The monorepo at a glance',
+      'Inside destination/ — the Next.js frontend',
+      'Inside destination-api/ — the Spring Boot API',
+    ],
+    // Parallel to monorepoTree noteIdx in AXTransformation.tsx (same order).
+    treeNotes: [
+      'defines the whole project structure & overview',
+      'nginx reverse proxy',
+      'Next.js frontend',
+      'Spring Boot REST API',
+      'frontend brief & conventions',
+      'AI infrastructure',
+      'localized routing',
+      'feature conventions',
+      'per-feature memory',
+      'API brief & domain rules',
+      'auth · booking · payment · tour …',
+      'security · config · email',
+      'Flyway SQL migrations',
+    ],
+    sprintTitle: 'A Full-Stack Platform in 5 Days',
+    sprintIntro:
+      'A complete travel-booking platform — payments, live chat, notifications included — shipped in a 5-day sprint. The secret is the architecture: conventions, skills, and quality gates were built first, so every AI-assisted change landed pre-checked.',
+    dayLabel: 'Day {day}',
+    // Parallel to the timeline in AXTransformation.tsx (same order).
+    days: [
+      {
+        title: 'Infrastructure before features',
+        description:
+          'Monorepo scaffold and role-based routing — plus the AI groundwork: CLAUDE.md briefs, convention rules, skills, subagents, and quality-gate hooks, all before feature code.',
+      },
+      {
+        title: 'Parallel feature sprint',
+        description:
+          'Auth with MFA, landing page, agency and admin dashboards with a 3D map on the frontend — while tours, booking, and reviews APIs grew on the backend against the same conventions.',
+      },
+      {
+        title: 'Restructure & wire up',
+        description:
+          'Refactored into feature folders, connected the frontend to live APIs, and built out calendars, activities, profiles, and booking requests.',
+      },
+      {
+        title: 'Realtime & notifications',
+        description:
+          'Wired explore, profile, booking, and map flows end-to-end, then layered in Knock notifications and WebSocket realtime updates.',
+      },
+      {
+        title: 'Payments & launch',
+        description:
+          'Bakong KHQR payments, Telegram live chat, ratings and reviews — then Docker Compose with nginx and deployment to Google Cloud.',
+      },
+    ],
+    repoTitle: 'Explore the source',
+    repoText:
+      'The whole build is on GitHub — the monorepo, the .claude/ infrastructure, and all 161 commits of the 5-day sprint.',
+    repoCta: 'View on GitHub',
   },
 
   design: {
@@ -346,6 +416,12 @@ export const en = {
       successBody:
         "Thank you for your message! Your email client will open to send the message. I'll get back to you as soon as possible.",
     },
+  },
+
+  footer: {
+    // Quick-link labels reuse nav.* keys; the © name reuses hero.name.
+    tagline: 'Full Stack Developer & AX Engineer',
+    goUp: 'Go Up',
   },
 }
 

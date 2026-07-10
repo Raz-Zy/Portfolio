@@ -1,14 +1,15 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { 
-  FaCode, 
-  FaPaintBrush, 
-  FaVideo, 
-  FaReact, 
-  FaHtml5, 
-  FaCss3Alt, 
-  FaPython, 
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { useScrollStepper } from '@/lib/useScrollStepper'
+import {
+  FaCode,
+  FaPaintBrush,
+  FaVideo,
+  FaReact,
+  FaHtml5,
+  FaCss3Alt,
+  FaPython,
   FaJava,
   FaLightbulb,
   FaClock,
@@ -25,12 +26,12 @@ import {
   FaComments,
   FaRobot
 } from 'react-icons/fa'
-import { 
-  SiTailwindcss, 
-  SiAdobephotoshop, 
-  SiAdobeillustrator, 
-  SiAdobepremierepro, 
-  SiAdobeaftereffects, 
+import {
+  SiTailwindcss,
+  SiAdobephotoshop,
+  SiAdobeillustrator,
+  SiAdobepremierepro,
+  SiAdobeaftereffects,
   SiNextdotjs,
   SiKubernetes,
   SiAnsible,
@@ -60,7 +61,7 @@ interface SoftSkill {
 const hardSkillsData: SkillCategory[] = [
   {
     icon: <FaCode />,
-    color: "from-blue-500 to-purple-600",
+    color: "from-blue-500 to-primary-600",
     skills: [
       { name: "C#", icon: <FaCode />, level: 75 },
       { name: "Java", icon: <FaJava />, level: 85 },
@@ -86,7 +87,7 @@ const hardSkillsData: SkillCategory[] = [
   },
   {
     icon: <FaPaintBrush />,
-    color: "from-pink-500 to-rose-600",
+    color: "from-accent-500 to-rose-600",
     skills: [
       { name: "Photoshop", icon: <SiAdobephotoshop />, level: 85 },
       { name: "Illustrator", icon: <SiAdobeillustrator />, level: 80 },
@@ -125,8 +126,169 @@ const softSkillsData: SoftSkill[] = [
   { icon: <FaHandshake /> },
 ]
 
+// Skill rows shared by the pinned stack card and the grid fallback.
+// animateBars: 'in-view' uses whileInView (grid); 'active' animates whenever
+// isActive flips true (pinned stack, where everything is always in view).
+function SkillRows({
+  category,
+  animateBars,
+  isActive = false,
+}: {
+  category: SkillCategory
+  animateBars: 'in-view' | 'active'
+  isActive?: boolean
+}) {
+  return (
+    <div className="space-y-4">
+      {category.skills.map((skill, skillIndex) => (
+        <div key={skillIndex} className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm">
+            {skill.icon}
+          </div>
+          <div className="flex-1">
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {skill.name}
+              </span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {skill.level}%
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              {animateBars === 'in-view' ? (
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${skill.level}%` }}
+                  transition={{ duration: 1, delay: skillIndex * 0.1 }}
+                  viewport={{ once: true }}
+                  className={`h-2 bg-gradient-to-r ${category.color} rounded-full`}
+                />
+              ) : (
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: isActive ? `${skill.level}%` : '0%' }}
+                  transition={{ duration: 0.8, delay: isActive ? skillIndex * 0.08 : 0 }}
+                  className={`h-2 bg-gradient-to-r ${category.color} rounded-full`}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Card swap animation: the new card slides in from the gesture direction
+// while the old one scales away toward the opposite side.
+const cardVariants = {
+  enter: (dir: number) => ({ y: dir > 0 ? '55vh' : '-55vh', opacity: 0, scale: 0.96 }),
+  center: { y: '0vh', opacity: 1, scale: 1 },
+  exit: (dir: number) => ({ y: dir > 0 ? '-40vh' : '40vh', opacity: 0, scale: 0.92 }),
+}
+
+// Gesture-stepped card stack backed by real page scroll — the stepping
+// mechanics live in useScrollStepper (shared with the UX/UI design process).
+function HardSkillsStack({ titles }: { titles: string[] }) {
+  const { t } = useTranslation()
+  const total = hardSkillsData.length
+  const { containerRef, active, direction, goTo } = useScrollStepper(total)
+
+  const category = hardSkillsData[active]
+
+  return (
+    <div ref={containerRef} className="relative" style={{ height: `${total * 100}vh` }}>
+      <div className="sticky top-0 h-screen pt-20 flex flex-col items-center justify-center bg-white dark:bg-gray-900 overflow-hidden">
+      <h3 className="text-3xl font-bold text-center mb-10 text-gray-900 dark:text-white">
+        {t('skills.technicalTitle')}
+      </h3>
+      <div className="relative w-full flex-none h-[60vh] min-h-[420px] overflow-hidden pt-4">
+        <AnimatePresence custom={direction} initial={false}>
+          <motion.div
+            key={active}
+            custom={direction}
+            variants={cardVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-x-0 flex justify-center px-6"
+          >
+            <div className="w-full max-w-3xl bg-gray-50 dark:bg-gray-800 p-8 rounded-2xl shadow-primary-lg">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <div className={`w-14 h-14 bg-gradient-to-br ${category.color} rounded-full flex items-center justify-center text-white text-2xl`}>
+                    {category.icon}
+                  </div>
+                  <h4 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                    {titles[active]}
+                  </h4>
+                </div>
+                <span className="text-sm font-mono text-gray-400 dark:text-gray-500">
+                  0{active + 1} / 0{total}
+                </span>
+              </div>
+              <SkillRows category={category} animateBars="active" isActive />
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+        {/* Step dots mirror the active card; clicking one jumps to it */}
+        <div className="flex gap-2 mt-6">
+          {hardSkillsData.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              aria-label={titles[index]}
+              onClick={() => goTo(index)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                index === active
+                  ? 'w-8 bg-gradient-to-r from-primary-500 to-accent-500'
+                  : 'w-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Original 2-col grid — mobile/tablet and reduced-motion fallback.
+function HardSkillsGrid({ titles }: { titles: string[] }) {
+  return (
+    <div className="container mx-auto px-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8 items-start">
+        {hardSkillsData.map((category, categoryIndex) => (
+          <motion.div
+            key={categoryIndex}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: categoryIndex * 0.2 }}
+            viewport={{ once: true }}
+            className="bg-gray-50 dark:bg-gray-800 p-8 rounded-2xl shadow-primary card-hover"
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className={`w-12 h-12 bg-gradient-to-br ${category.color} rounded-full flex items-center justify-center text-white text-xl`}>
+                {category.icon}
+              </div>
+              <h4 className="text-xl font-bold text-gray-900 dark:text-white">
+                {titles[categoryIndex]}
+              </h4>
+            </div>
+            <SkillRows category={category} animateBars="in-view" />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function Skills() {
   const { t, m } = useTranslation()
+  const reducedMotion = useReducedMotion()
+  const titles = m.skills.categories
+
   return (
     <section className="py-20 bg-white dark:bg-gray-900">
       <div className="container mx-auto px-6">
@@ -144,64 +306,34 @@ export default function Skills() {
             {t('skills.subtitle')}
           </p>
         </motion.div>
+      </div>
 
-        {/* Hard Skills */}
-        <div className="mb-20">
-          <h3 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
-            {t('skills.technicalTitle')}
-          </h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8 items-start">
-            {hardSkillsData.map((category, categoryIndex) => (
-              <motion.div
-                key={categoryIndex}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: categoryIndex * 0.2 }}
-                viewport={{ once: true }}
-                className="bg-gray-50 dark:bg-gray-800 p-8 rounded-2xl shadow-lg card-hover"
-              >
-                <div className="flex items-center gap-4 mb-6">
-                  <div className={`w-12 h-12 bg-gradient-to-br ${category.color} rounded-full flex items-center justify-center text-white text-xl`}>
-                    {category.icon}
-                  </div>
-                  <h4 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {m.skills.categories[categoryIndex]}
-                  </h4>
-                </div>
-                
-                <div className="space-y-4">
-                  {category.skills.map((skill, skillIndex) => (
-                    <div key={skillIndex} className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm">
-                        {skill.icon}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {skill.name}
-                          </span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {skill.level}%
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${skill.level}%` }}
-                            transition={{ duration: 1, delay: skillIndex * 0.1 }}
-                            viewport={{ once: true }}
-                            className={`h-2 bg-gradient-to-r ${category.color} rounded-full`}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+      {/* Hard Skills: pinned scroll stack on desktop, grid on small screens
+          and for reduced motion. Dual render is CSS-only to stay SSR-safe. */}
+      <div className="mb-20">
+        {reducedMotion ? (
+          <>
+            <h3 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+              {t('skills.technicalTitle')}
+            </h3>
+            <HardSkillsGrid titles={titles} />
+          </>
+        ) : (
+          <>
+            <div className="hidden lg:block">
+              <HardSkillsStack titles={titles} />
+            </div>
+            <div className="lg:hidden">
+              <h3 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+                {t('skills.technicalTitle')}
+              </h3>
+              <HardSkillsGrid titles={titles} />
+            </div>
+          </>
+        )}
+      </div>
 
+      <div className="container mx-auto px-6">
         {/* Soft Skills */}
         <div>
           <h3 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
@@ -215,9 +347,9 @@ export default function Skills() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 rounded-2xl text-center card-hover"
+                className="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 p-6 rounded-2xl text-center card-hover"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
                   {skill.icon}
                 </div>
                 <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">

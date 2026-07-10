@@ -1,7 +1,8 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { FaArrowDown, FaEnvelope, FaEye, FaGithub, FaFacebook, FaTelegram } from 'react-icons/fa'
+import { useRef } from 'react'
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { FaEnvelope, FaEye, FaGithub, FaFacebook, FaTelegram } from 'react-icons/fa'
 import { useTranslation } from '@/i18n/useTranslation'
 
 // Timing: the black->white intro curtain plays first, then content reveals.
@@ -17,8 +18,22 @@ const slideInLeft = (delay: number) => ({
 
 export default function Hero() {
   const { t } = useTranslation()
+  const heroRef = useRef<HTMLElement>(null)
+  const reducedMotion = useReducedMotion()
+
+  // Scroll-scrubbed exit: as the hero scrolls off, the content sinks, shrinks
+  // and fades. The cosmic background itself is fixed (see CosmicBackground
+  // mounted in page.tsx) so it stays pinned while content scrolls over it.
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  })
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 120])
+  const contentScale = useTransform(scrollYProgress, [0, 1], [1, 0.92])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
+
   return (
-    <section className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 relative overflow-hidden transition-colors duration-300 mt-20">
+    <section ref={heroRef} className="min-h-screen flex items-center justify-center relative overflow-hidden mt-20">
       {/* Intro curtain: a black circle appears in the middle of a white screen,
           scales up to fill the screen, then fades black -> white to reveal the
           hero. White backdrop fades out last so it blends into the page. */}
@@ -40,20 +55,10 @@ export default function Hero() {
         />
       </motion.div>
 
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full blur-3xl animate-float opacity-60"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-br from-pink-100 to-orange-100 dark:from-pink-900/30 dark:to-orange-900/30 rounded-full blur-3xl animate-float-delay opacity-60"></div>
-        <div className="absolute top-1/2 left-1/4 w-40 h-40 bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 rounded-full blur-2xl animate-float opacity-40"></div>
-        <div className="absolute bottom-1/3 right-1/3 w-60 h-60 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full blur-2xl animate-float-delay opacity-40"></div>
-      </div>
-
-      {/* Grid Pattern */}
-      <div className="absolute inset-0 opacity-15 dark:opacity-10">
-        <div className="w-full h-full bg-grid-pattern bg-grid-size"></div>
-      </div>
-
-      <div className="container mx-auto px-6 text-center relative z-10">
+      <motion.div
+        className="container mx-auto px-6 text-center relative z-10"
+        style={reducedMotion ? undefined : { y: contentY, scale: contentScale, opacity: contentOpacity }}
+      >
         <div className="mb-8">
           {/* Enhanced Profile Image */}
           <motion.div
@@ -77,13 +82,13 @@ export default function Hero() {
               }}
             >
               {/* Gradient Background Ring */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 dark:from-purple-400 dark:via-pink-400 dark:to-orange-400 rounded-full p-1 shadow-2xl">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary-500 via-accent-500 to-orange-500 dark:from-primary-400 dark:via-accent-400 dark:to-orange-400 rounded-full p-1 shadow-primary-lg">
                 <div className="w-full h-full bg-white dark:bg-gray-900 rounded-full p-1">
                   {/* Profile Image */}
                   <motion.img
                     src="/Profile.png"
                     alt="Tan Dara Profile"
-                    className="w-full h-full object-cover rounded-full shadow-xl relative z-10"
+                    className="w-full h-full object-cover rounded-full shadow-primary relative z-10"
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   />
@@ -91,10 +96,10 @@ export default function Hero() {
               </div>
 
               {/* Floating Shadow */}
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-48 h-12 bg-gradient-to-r from-transparent via-purple-500/30 to-transparent dark:via-purple-400/30 rounded-full blur-md opacity-60"></div>
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-48 h-12 bg-gradient-to-r from-transparent via-primary-500/30 to-transparent dark:via-primary-400/30 rounded-full blur-md opacity-60"></div>
 
               {/* Glowing Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-orange-500/20 dark:from-purple-400/20 dark:via-pink-400/20 dark:to-orange-400/20 rounded-full blur-lg animate-pulse -z-10"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 via-accent-500/20 to-orange-500/20 dark:from-primary-400/20 dark:via-accent-400/20 dark:to-orange-400/20 rounded-full blur-lg animate-pulse -z-10"></div>
 
               {/* Sparkle Effects */}
               <motion.div
@@ -125,7 +130,7 @@ export default function Hero() {
               />
 
               <motion.div
-                className="absolute top-4 -left-4 w-1.5 h-1.5 bg-gradient-to-br from-white to-pink-200 dark:from-pink-200 dark:to-white rounded-full opacity-60"
+                className="absolute top-4 -left-4 w-1.5 h-1.5 bg-gradient-to-br from-white to-accent-200 dark:from-accent-200 dark:to-white rounded-full opacity-60"
                 animate={{
                   scale: [1, 1.4, 1],
                   opacity: [0.6, 1, 0.6]
@@ -140,23 +145,24 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Name with reveal animation (slides up from behind a mask) */}
+          {/* Name in a glass pill, with reveal animation (slides up
+              from behind a mask) */}
           <h1 className="text-4xl md:text-6xl font-bold mb-4 text-gray-900 dark:text-white">
             <span className="block overflow-hidden pb-2">
               <motion.span
-                className="block text-gradient"
+                className="glass-pill inline-flex items-center justify-center px-8 py-3 md:px-12 md:py-4"
                 initial={{ y: '110%' }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.8, delay: INTRO + 0.25, ease: EASE_OUT }}
               >
-                Tan Dara
+                <span className="text-gradient">{t('hero.name')}</span>
               </motion.span>
             </span>
           </h1>
 
           <div className="overflow-hidden mb-4">
             <motion.p
-              className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-medium"
+              className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-semibold"
               initial={{ y: '120%' }}
               animate={{ y: 0 }}
               transition={{ duration: 0.7, delay: INTRO + 0.7, ease: EASE_OUT }}
@@ -167,7 +173,7 @@ export default function Hero() {
 
           <div className="overflow-hidden max-w-2xl mx-auto">
             <motion.p
-              className="text-lg xl:text-lg 2xl:text-2xl text-gray-600 dark:text-gray-400 leading-relaxed"
+              className="text-sm xl:text-lg 2xl:text-xl text-gray-600 dark:text-gray-400 leading-relaxed"
               initial={{ y: '120%' }}
               animate={{ y: 0 }}
               transition={{ duration: 0.7, delay: INTRO + 1.0, ease: EASE_OUT }}
@@ -184,7 +190,7 @@ export default function Hero() {
         >
           <motion.button
             onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-500 dark:to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:from-purple-700 hover:to-pink-700 dark:hover:from-purple-600 dark:hover:to-pink-600 transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="bg-gradient-to-r from-primary-600 to-accent-600 dark:from-primary-500 dark:to-accent-500 text-white px-6 py-3 rounded-full font-semibold hover:from-primary-700 hover:to-accent-700 dark:hover:from-primary-600 dark:hover:to-accent-600 transition-all duration-300 flex items-center gap-3 shadow-primary hover:shadow-primary-lg transform hover:scale-105"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -194,7 +200,7 @@ export default function Hero() {
 
           <motion.button
             onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="bg-white dark:bg-gray-800 border-2 border-purple-600 dark:border-purple-400 text-purple-600 dark:text-purple-400 px-6 py-3 rounded-full font-semibold hover:bg-purple-600 hover:text-white dark:hover:bg-purple-600 dark:hover:text-white transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="bg-white dark:bg-gray-800 border-2 border-primary-600 dark:border-primary-400 text-primary-600 dark:text-primary-400 px-6 py-3 rounded-full font-semibold hover:bg-primary-600 hover:text-white dark:hover:bg-primary-600 dark:hover:text-white transition-all duration-300 flex items-center gap-2 shadow-primary hover:shadow-primary-lg transform hover:scale-105"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -212,7 +218,7 @@ export default function Hero() {
             href="https://github.com/Raz-Zy"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-gray-800 dark:hover:bg-gray-700 hover:text-white dark:hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
+            className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-gray-800 dark:hover:bg-gray-700 hover:text-white dark:hover:text-white transition-all duration-300 shadow-primary hover:shadow-primary-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
           >
             <FaGithub size={20} />
@@ -221,7 +227,7 @@ export default function Hero() {
             href="https://www.facebook.com/dara.tan.583"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white dark:hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
+            className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white dark:hover:text-white transition-all duration-300 shadow-primary hover:shadow-primary-lg"
             whileHover={{ scale: 1.1, rotate: -5 }}
           >
             <FaFacebook size={20} />
@@ -230,7 +236,7 @@ export default function Hero() {
             href="https://t.me/TanDaras"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-sky-500 dark:hover:bg-sky-500 hover:text-white dark:hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
+            className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-sky-500 dark:hover:bg-sky-500 hover:text-white dark:hover:text-white transition-all duration-300 shadow-primary hover:shadow-primary-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
           >
             <FaTelegram size={20} />
@@ -250,13 +256,13 @@ export default function Hero() {
             whileHover={{ scale: 1.1 }}
           >
             <motion.div
-              className="w-1.5 h-3 bg-gradient-to-b from-purple-500 to-pink-500 dark:from-purple-400 dark:to-pink-400 rounded-full mt-2"
+              className="w-1.5 h-3 bg-gradient-to-b from-primary-500 to-accent-500 dark:from-primary-400 dark:to-accent-400 rounded-full mt-2"
               animate={{ y: [0, 16, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
             />
           </motion.div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   )
 }

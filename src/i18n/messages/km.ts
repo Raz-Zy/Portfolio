@@ -14,6 +14,7 @@ export const km: Messages = {
     about: 'អំពីខ្ញុំ',
     education: 'ការសិក្សា',
     skills: 'ជំនាញ',
+    ax: 'បំប្លែងតាម AI',
     design: 'ការរចនា UX/UI',
     github: 'GitHub',
     experience: 'បទពិសោធន៍',
@@ -27,7 +28,8 @@ export const km: Messages = {
   },
 
   hero: {
-    role: 'អ្នកសរសេរកូដផ្នែកខាងមុខនិងខាងក្រោយ និងជាអ្នករចនាច្នៃប្រឌិត',
+    name: 'តាន់ ដារា',
+    role: 'អ្នកសរសេរកូដ​ - អ្នករចនាការប្រើ AI Coding/ប្រព័ន្ធស្វ័យប្រវត្តិកម្ម - អ្នករចនាច្នៃប្រឌិត',
     tagline:
       'ខ្ញុំមានចំណង់ចំណូលចិត្តក្នុងការបង្កើតបទពិសោធន៍ឌីជីថលដ៏ស្រស់ស្អាត និងមានប្រយោជន៍ តាមរយៈកូដ និងការរចនា។ តោះមកបង្កើតអ្វីដ៏អស្ចារ្យជាមួយគ្នា។',
     viewWork: 'មើលស្នាដៃរបស់ខ្ញុំ',
@@ -112,6 +114,74 @@ export const km: Messages = {
       { name: 'ការផ្ដោតអារម្មណ៍', description: 'ការយកចិត្តទុកដាក់ជាប់លាប់លើសេចក្ដីលម្អិត' },
       { name: 'ទំនុកចិត្ត', description: 'ការសម្រេចចិត្តប្រកបដោយទំនុកចិត្ត' },
     ],
+  },
+
+  ax: {
+    title: 'ការបំប្លែងតាម AI (AX)',
+    subtitle:
+      'លើសពីការប្រើឧបករណ៍ AI — ខ្ញុំរៀបចំបរិយាកាសអភិវឌ្ឍន៍បែប AI-native ដោយសាងសង់ហេដ្ឋារចនាសម្ព័ន្ធ Claude Code ដែលប្រែក្លាយជំនួយការ AI ទៅជាដៃគូវិស្វកម្មដែលមានវិន័យ និងយល់ដឹងពីគម្រោង។',
+    // Parallel to statValues in AXTransformation.tsx (labels only).
+    stats: ['ថ្ងៃ', 'Commits', 'Subagents', 'Skills', 'Hooks ត្រួតពិនិត្យ'],
+    structureTitle: 'monorepo & AI architecture',
+    // Captions for the 3 scroll-journey stages in AXTransformation.tsx
+    // (root overview → destination/ → destination-api/).
+    stageLabels: [
+      'ទិដ្ឋភាពរួមនៃ monorepo',
+      'ខាងក្នុង destination/ — frontend Next.js',
+      'ខាងក្នុង destination-api/ — API Spring Boot',
+    ],
+    // Parallel to monorepoTree noteIdx in AXTransformation.tsx (same order).
+    treeNotes: [
+      'កំណត់រចនាសម្ព័ន្ធ និងទិដ្ឋភាពរួមនៃគម្រោងទាំងមូល',
+      'nginx reverse proxy',
+      'frontend Next.js',
+      'REST API Spring Boot',
+      'ខ្លឹមសារ និងបទដ្ឋាន frontend',
+      'ហេដ្ឋារចនាសម្ព័ន្ធ AI',
+      'ផ្លូវរត់តាមភាសា',
+      'បទដ្ឋានតាម feature',
+      'អង្គចងចាំតាម feature',
+      'ខ្លឹមសារ API និងច្បាប់ដូមេន',
+      'auth · booking · payment · tour …',
+      'security · config · email',
+      'migrations SQL របស់ Flyway',
+    ],
+    sprintTitle: 'វេទិកា Full-Stack ក្នុងរយៈពេល ៥ ថ្ងៃ',
+    sprintIntro:
+      'វេទិកាកក់ទេសចរណ៍ពេញលេញ — រួមទាំងការទូទាត់ ជជែកផ្ទាល់ និងការជូនដំណឹង — បញ្ចប់ក្នុង sprint ៥ ថ្ងៃ។ អាថ៌កំបាំងគឺស្ថាបត្យកម្ម៖ បទដ្ឋាន skills និងច្រកត្រួតពិនិត្យគុណភាពត្រូវបានសាងសង់មុន ដូច្នេះរាល់ការផ្លាស់ប្ដូរដោយជំនួយ AI ត្រូវបានពិនិត្យរួចជាស្រេច។',
+    dayLabel: 'ថ្ងៃទី {day}',
+    // Parallel to the timeline in AXTransformation.tsx (same order).
+    days: [
+      {
+        title: 'ហេដ្ឋារចនាសម្ព័ន្ធមុន features',
+        description:
+          'គ្រោង monorepo និងផ្លូវរត់តាមតួនាទី — ព្រមទាំងមូលដ្ឋាន AI៖ ឯកសារ CLAUDE.md, ច្បាប់បទដ្ឋាន, skills, subagents និង hooks ត្រួតពិនិត្យគុណភាព ទាំងអស់មុនកូដ feature។',
+      },
+      {
+        title: 'Sprint features ស្របគ្នា',
+        description:
+          'Auth ជាមួយ MFA, ទំព័រដើម, ផ្ទាំងគ្រប់គ្រង agency និង admin ជាមួយផែនទី 3D នៅ frontend — ខណៈ API ទេសចរណ៍ ការកក់ និងការវាយតម្លៃ រីកចម្រើននៅ backend តាមបទដ្ឋានដូចគ្នា។',
+      },
+      {
+        title: 'រៀបចំរចនាសម្ព័ន្ធ និងភ្ជាប់',
+        description:
+          'រៀបចំជាថតតាម feature ភ្ជាប់ frontend ទៅ API ផ្ទាល់ និងសាងសង់ប្រតិទិន សកម្មភាព ប្រវត្តិរូប និងសំណើកក់។',
+      },
+      {
+        title: 'Realtime និងការជូនដំណឹង',
+        description:
+          'ភ្ជាប់លំហូរស្វែងរក ប្រវត្តិរូប ការកក់ និងផែនទីពីដើមដល់ចប់ បន្ទាប់មកបន្ថែមការជូនដំណឹង Knock និងបច្ចុប្បន្នភាព realtime តាម WebSocket។',
+      },
+      {
+        title: 'ការទូទាត់ និងការដាក់ឱ្យដំណើរការ',
+        description:
+          'ការទូទាត់ Bakong KHQR, ជជែកផ្ទាល់តាម Telegram, ការវាយតម្លៃ — បន្ទាប់មក Docker Compose ជាមួយ nginx និងដាក់ពង្រាយលើ Google Cloud។',
+      },
+    ],
+    repoTitle: 'រុករកកូដដើម',
+    repoText:
+      'គម្រោងទាំងមូលនៅលើ GitHub — monorepo, ហេដ្ឋារចនាសម្ព័ន្ធ .claude/ និង commits ទាំង ១៦១ នៃ sprint ៥ ថ្ងៃ។',
+    repoCta: 'មើលលើ GitHub',
   },
 
   design: {
@@ -332,5 +402,10 @@ export const km: Messages = {
       successBody:
         'អរគុណសម្រាប់សាររបស់អ្នក! កម្មវិធីអ៊ីមែលរបស់អ្នកនឹងបើកដើម្បីផ្ញើសារ។ ខ្ញុំនឹងឆ្លើយតបទៅអ្នកឱ្យបានឆាប់តាមដែលអាចធ្វើទៅបាន។',
     },
+  },
+
+  footer: {
+    tagline: 'អ្នកអភិវឌ្ឍ Full Stack និងវិស្វករ AX',
+    goUp: 'ឡើងលើ',
   },
 }
