@@ -32,6 +32,23 @@ const socialLinks = [
   { href: 'https://t.me/TanDaras', icon: FaTelegram, label: 'Telegram' },
 ]
 
+// Both files download from one click; the stagger keeps Safari/Firefox from
+// swallowing the second download when two fire in the same tick.
+const resumeFiles = ['Tan Dara Resume.pdf', 'Tan Dara Cover Letter.pdf']
+
+function downloadResumeFiles() {
+  resumeFiles.forEach((name, index) => {
+    setTimeout(() => {
+      const link = document.createElement('a')
+      link.href = encodeURI(`/${name}`)
+      link.download = name
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+    }, index * 500)
+  })
+}
+
 const contactDetails = [
   {
     icon: FaEnvelope,
@@ -136,14 +153,18 @@ export default function Footer() {
         className="relative z-0 -mt-6 mx-1 sm:mx-8 bg-[#161b24] rounded-3xl px-3 sm:px-7 pt-10 pb-4 sm:pt-11 sm:pb-5"
       >
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <a href="/Tan_Dara_CV.pdf" download="Tan_Dara_CV.pdf" className={lightPill}>
+          <button
+            type="button"
+            onClick={downloadResumeFiles}
+            className={lightPill}
+          >
             <span className={pillLabel}>{t('contact.downloadResume')}</span>
             <span
               className={`${pillCircle} transition-transform group-hover:translate-y-0.5`}
             >
               <FaDownload size={12} />
             </span>
-          </a>
+          </button>
 
           <button
             type="button"
