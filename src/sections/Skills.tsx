@@ -40,6 +40,7 @@ import {
   SiAnthropic
 } from 'react-icons/si'
 import { useTranslation } from '@/i18n/useTranslation'
+import SoftSkillsFlow, { SoftSkillItem } from '@/components/SoftSkillsFlow'
 
 // Visual config only — category titles come from messages (skills.categories),
 // index-aligned with this array. Skill names/levels are locale-invariant.
@@ -139,10 +140,10 @@ function SkillRows({
   isActive?: boolean
 }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-2.5 md:space-y-4">
       {category.skills.map((skill, skillIndex) => (
         <div key={skillIndex} className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm">
+          <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-xs md:text-sm shrink-0">
             {skill.icon}
           </div>
           <div className="flex-1">
@@ -198,11 +199,13 @@ function HardSkillsStack({ titles }: { titles: string[] }) {
 
   return (
     <div ref={containerRef} className="relative" style={{ height: `${total * 100}vh` }}>
-      <div className="sticky top-0 h-screen pt-20 flex flex-col items-center justify-center bg-white dark:bg-gray-900 overflow-hidden">
-      <h3 className="text-3xl font-bold text-center mb-10 text-gray-900 dark:text-white">
+      {/* h-dvh, not h-screen: on mobile the URL bar collapse resizes 100vh
+          and makes the pinned viewport jump */}
+      <div className="sticky top-0 h-dvh pt-20 flex flex-col items-center justify-center bg-white dark:bg-gray-900 overflow-hidden">
+      <h3 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-10 text-gray-900 dark:text-white">
         {t('skills.technicalTitle')}
       </h3>
-      <div className="relative w-full flex-none h-[60vh] min-h-[420px] overflow-hidden pt-4">
+      <div className="relative w-full flex-none h-[62dvh] min-h-[400px] md:h-[60vh] md:min-h-[420px] overflow-hidden pt-4">
         <AnimatePresence custom={direction} initial={false}>
           <motion.div
             key={active}
@@ -214,13 +217,13 @@ function HardSkillsStack({ titles }: { titles: string[] }) {
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             className="absolute inset-x-0 flex justify-center px-6"
           >
-            <div className="w-full max-w-3xl bg-gray-50 dark:bg-gray-800 p-8 rounded-2xl shadow-primary-lg">
-              <div className="flex items-center justify-between mb-6">
+            <div className="w-full max-w-3xl bg-gray-50 dark:bg-gray-800 p-5 md:p-8 rounded-2xl shadow-primary-lg">
+              <div className="flex items-center justify-between mb-4 md:mb-6">
                 <div className="flex items-center gap-4">
-                  <div className={`w-14 h-14 bg-gradient-to-br ${category.color} rounded-full flex items-center justify-center text-white text-2xl`}>
+                  <div className={`w-11 h-11 md:w-14 md:h-14 bg-gradient-to-br ${category.color} rounded-full flex items-center justify-center text-white text-xl md:text-2xl`}>
                     {category.icon}
                   </div>
-                  <h4 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                  <h4 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">
                     {titles[active]}
                   </h4>
                 </div>
@@ -284,10 +287,45 @@ function HardSkillsGrid({ titles }: { titles: string[] }) {
   )
 }
 
+// Original card grid — mobile/tablet and reduced-motion fallback for the
+// desktop mind-map (SoftSkillsFlow).
+function SoftSkillsGrid({ items }: { items: SoftSkillItem[] }) {
+  return (
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {items.map((skill, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: index * 0.1 }}
+          viewport={{ once: true }}
+          className="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 p-6 rounded-2xl text-center card-hover"
+        >
+          <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
+            {skill.icon}
+          </div>
+          <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            {skill.name}
+          </h5>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            {skill.description}
+          </p>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
 export default function Skills() {
   const { t, m } = useTranslation()
   const reducedMotion = useReducedMotion()
   const titles = m.skills.categories
+  // Merge locale-invariant icons with translated names/descriptions.
+  const softSkills: SoftSkillItem[] = softSkillsData.map((skill, index) => ({
+    icon: skill.icon,
+    name: m.skills.soft[index].name,
+    description: m.skills.soft[index].description,
+  }))
 
   return (
     <section className="py-20 bg-white dark:bg-gray-900">
@@ -308,8 +346,8 @@ export default function Skills() {
         </motion.div>
       </div>
 
-      {/* Hard Skills: pinned scroll stack on desktop, grid on small screens
-          and for reduced motion. Dual render is CSS-only to stay SSR-safe. */}
+      {/* Hard Skills: pinned scroll stack at every size (compact card styles
+          keep it inside small viewports); grid only for reduced motion. */}
       <div className="mb-20">
         {reducedMotion ? (
           <>
@@ -319,48 +357,23 @@ export default function Skills() {
             <HardSkillsGrid titles={titles} />
           </>
         ) : (
-          <>
-            <div className="hidden lg:block">
-              <HardSkillsStack titles={titles} />
-            </div>
-            <div className="lg:hidden">
-              <h3 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
-                {t('skills.technicalTitle')}
-              </h3>
-              <HardSkillsGrid titles={titles} />
-            </div>
-          </>
+          <HardSkillsStack titles={titles} />
         )}
       </div>
 
       <div className="container mx-auto px-6">
-        {/* Soft Skills */}
+        {/* Soft Skills: react-flow mind map at every size (radial around the
+            hub on desktop, hub-on-top tree fan on mobile — the layout switch
+            lives inside SoftSkillsFlow); grid only for reduced motion. */}
         <div>
           <h3 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
             {t('skills.softTitle')}
           </h3>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {softSkillsData.map((skill, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 p-6 rounded-2xl text-center card-hover"
-              >
-                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
-                  {skill.icon}
-                </div>
-                <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {m.skills.soft[index].name}
-                </h5>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {m.skills.soft[index].description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
+          {reducedMotion ? (
+            <SoftSkillsGrid items={softSkills} />
+          ) : (
+            <SoftSkillsFlow title={t('skills.softTitle')} items={softSkills} />
+          )}
         </div>
       </div>
     </section>

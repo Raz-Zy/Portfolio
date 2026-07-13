@@ -1,7 +1,7 @@
 'use client'
 
-import { Fragment, useRef, useState } from 'react'
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { Fragment, useState } from 'react'
+import { motion } from 'framer-motion'
 import {
   FaGithub,
   FaFacebook,
@@ -82,29 +82,8 @@ export default function Footer() {
   const { t } = useTranslation()
   const [contactOpen, setContactOpen] = useState(false)
 
-  // Scroll-scrubbed reveal for the action bar: tied to how far the footer
-  // has been scrolled into view (0 = footer top hits the viewport bottom,
-  // 1 = page fully scrolled), NOT a one-shot whileInView — that fired while
-  // the bar was still below the fold, so the slide was over before it could
-  // be seen. -72px keeps it fully hidden behind the opaque headline card.
-  const footerRef = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: footerRef,
-    offset: ['start end', 'end end'],
-  })
-  // 0.5 start: the footer's top enters while Experience's last pinned card
-  // is still on screen — beginning the slide at half-entered keeps it
-  // happening where the user is actually looking. The spring makes the bar
-  // CHASE the scroll instead of tracking it 1:1 — a fast flick to the bottom
-  // still plays the whole slide out at a watchable speed.
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 50,
-    damping: 16,
-  })
-  const barY = useTransform(smoothProgress, [0.5, 0.95], [-72, 0])
-
   return (
-    <footer ref={footerRef} className="px-3 sm:px-6 pb-6">
+    <footer className="px-3 sm:px-6 pb-6">
       {/* headline card — sits ABOVE the action bar (z-10 + opaque bg) so the
           bar can hide underneath it and slide out */}
       <motion.div
@@ -145,11 +124,20 @@ export default function Footer() {
 
       {/* action bar — tucked UNDER the headline card: -mt pulls its (rounded)
           top edge behind the card with no gap, the extra top padding keeps the
-          pills clear of the overlap, and the scrubbed y makes it slide out
-          from underneath as the user scrolls down. The CONTACT pill expands
-          it to reveal the details. */}
+          pills clear of the overlap, and it springs out from underneath when
+          it comes into view near the page bottom. whileInView (live
+          IntersectionObserver rects), NOT a useScroll target scrub: useScroll
+          caches the footer's page offsets, and the GitHub section growing
+          async (plus the mobile URL bar resizing the viewport) left that
+          cache stale — the scrub then never reached its end on phones and the
+          bar stayed hidden until a resize re-measured it. No `once`, so it
+          tucks back in when scrolled away and replays. The CONTACT pill
+          expands it to reveal the details. */}
       <motion.div
-        style={{ y: barY }}
+        initial={{ y: -72 }}
+        whileInView={{ y: 0 }}
+        viewport={{ amount: 0.6 }}
+        transition={{ type: 'spring', stiffness: 50, damping: 16 }}
         className="relative z-0 -mt-6 mx-1 sm:mx-8 bg-[#161b24] rounded-3xl px-3 sm:px-7 pt-10 pb-4 sm:pt-11 sm:pb-5"
       >
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">

@@ -22,6 +22,17 @@ html {
   scroll-padding-top: 80px;
 }
 
+/* Slide-from-side entrance animations (initial x offsets in About and the AX
+   sprint timeline) stick out past the viewport until they play, making the
+   whole page horizontally scrollable on mobile. Clip, don't hide: `clip`
+   doesn't create a scroll container, so position:sticky (experience deck,
+   pinned steppers) keeps working. `hidden` line is the pre-2022 fallback. */
+html,
+body {
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
 body {
   /* Noto Sans Khmer first so Khmer renders; Latin falls through to system-ui. */
   font-family: var(--font-khmer), system-ui, sans-serif;
@@ -239,5 +250,16 @@ html[lang='km'] h3 {
   }
   60% {
     transform: translateY(-5px);
+  }
+}
+/* Marching-dash animation for the soft skills mind-map edges
+   (SoftSkillsFlow.tsx). Offset = dash 6 + gap 12 for a seamless loop. */
+.soft-skill-edge-dash {
+  animation: soft-skill-dash 1.2s linear infinite;
+}
+
+@keyframes soft-skill-dash {
+  to {
+    stroke-dashoffset: -18;
   }
 }

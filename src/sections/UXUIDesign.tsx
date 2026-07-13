@@ -292,20 +292,20 @@ function ProcessShowcase({
       transition={{ duration: 0.6 }}
       viewport={{ once: true }}
     >
-      {/* Section header — pinned along with the process stack on desktop */}
-      <div className="text-center mb-8 md:mb-10">
-        <h2 className="text-4xl md:text-5xl py-2 font-bold mb-4 text-gradient">
+      {/* Section header — pinned along with the process stack */}
+      <div className="text-center mb-2 md:mb-10">
+        <h2 className="text-2xl md:text-5xl py-1 md:py-2 font-bold mb-1 md:mb-4 text-gradient">
           {t('design.title')}
         </h2>
-        <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+        <p className="text-xs md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
           {t('design.subtitle')}
         </p>
       </div>
-      <h3 className="text-2xl font-bold text-center mb-6 md:mb-8 text-gray-900 dark:text-white">
+      <h3 className="text-base md:text-2xl font-bold text-center mb-2 md:mb-8 text-gray-900 dark:text-white">
         {t('design.processTitle')}
       </h3>
-      <div className="glass-card rounded-3xl p-6 md:p-10 shadow-primary">
-        <div className="grid lg:grid-cols-2 gap-10 items-center">
+      <div className="glass-card rounded-3xl p-3 md:p-10 shadow-primary">
+        <div className="grid lg:grid-cols-2 gap-3 lg:gap-10 items-center">
           {/* Left: step titles */}
           <div>
             {designProcess.map((_, index) => {
@@ -314,10 +314,10 @@ function ProcessShowcase({
                 <button
                   key={index}
                   onClick={() => onSelect(index)}
-                  className="block w-full text-left py-3 group focus:outline-none"
+                  className="block w-full text-left py-1 md:py-3 group focus:outline-none"
                 >
                   <span
-                    className={`text-2xl md:text-3xl font-semibold transition-colors duration-300 ${
+                    className={`text-base md:text-3xl font-semibold transition-colors duration-300 ${
                       isActive
                         ? 'text-black dark:text-white'
                         : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300'
@@ -336,7 +336,7 @@ function ProcessShowcase({
                     }`}
                   >
                     <div className="overflow-hidden">
-                      <p className="pt-2 text-sm md:text-base text-gray-600 dark:text-gray-300 max-w-md">
+                      <p className="pt-1 md:pt-2 text-xs md:text-base text-gray-600 dark:text-gray-300 max-w-md">
                         {m.design.process[index].description}
                       </p>
                     </div>
@@ -347,7 +347,7 @@ function ProcessShowcase({
           </div>
           {/* Right: animated visual for the active step */}
           <div
-            className="relative h-[340px] md:h-[min(420px,55vh)] md:min-h-[340px] rounded-3xl overflow-hidden transition-colors duration-500"
+            className="relative h-[170px] sm:h-[280px] lg:h-[min(420px,55vh)] lg:min-h-[340px] rounded-3xl overflow-hidden transition-colors duration-500"
             style={{
               background: `linear-gradient(135deg, ${designProcess[active].color}18, ${designProcess[active].color}40)`,
             }}
@@ -424,7 +424,9 @@ function ProcessStack() {
 
   return (
     <div ref={containerRef} className="relative" style={{ height: `${total * 100}vh` }}>
-      <div className="sticky top-0 h-screen flex flex-col justify-center">
+      {/* h-dvh, not h-screen: on mobile the URL bar collapse resizes 100vh
+          and makes the pinned viewport jump. pt clears the fixed navbar. */}
+      <div className="sticky top-0 h-dvh pt-14 md:pt-0 flex flex-col justify-center">
         <div className="container mx-auto px-6">
           <ProcessShowcase active={active} direction={direction} onSelect={goTo} />
         </div>
@@ -448,23 +450,16 @@ export default function UXUIDesign() {
 
   return (
     <section className="py-20">
-      {/* Design Process: pinned scroll stack on desktop, simple auto/click
-          block on small screens and for reduced motion. Dual render is
-          CSS-only to stay SSR-safe. */}
+      {/* Design Process: pinned scroll stack at every size (compact styles
+          keep the pinned block inside small viewports); simple auto/click
+          block only for reduced motion. */}
       <div className="mb-20">
         {reducedMotion ? (
           <div className="container mx-auto px-6">
             <ProcessSimple />
           </div>
         ) : (
-          <>
-            <div className="hidden lg:block">
-              <ProcessStack />
-            </div>
-            <div className="lg:hidden container mx-auto px-6">
-              <ProcessSimple />
-            </div>
-          </>
+          <ProcessStack />
         )}
       </div>
 
