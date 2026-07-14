@@ -310,7 +310,7 @@ export const en = {
         title: 'Computer Teacher',
         company: 'Educational Institution',
         type: 'Full-time',
-        duration: 'Aug 2022 - Mar 2025',
+        duration: 'Aug 2022 - Mar 2024',
         location: 'Cambodia',
         description: [
           'Served as a computer teacher, gaining valuable experience in my first professional role',
