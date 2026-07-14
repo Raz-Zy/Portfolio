@@ -4,6 +4,7 @@ import { Fragment, useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   FaGithub,
+  FaLinkedin,
   FaFacebook,
   FaTelegram,
   FaArrowRight,
@@ -24,6 +25,11 @@ import { useTranslation } from '@/i18n/useTranslation'
 // no dark: variants) by design.
 const socialLinks = [
   { href: 'https://github.com/Raz-Zy', icon: FaGithub, label: 'GitHub' },
+  {
+    href: 'https://www.linkedin.com/in/dara-tan-98b499413',
+    icon: FaLinkedin,
+    label: 'LinkedIn',
+  },
   {
     href: 'https://www.facebook.com/dara.tan.583',
     icon: FaFacebook,
@@ -83,7 +89,13 @@ export default function Footer() {
   const [contactOpen, setContactOpen] = useState(false)
 
   return (
-    <footer className="px-3 sm:px-6 pb-6">
+    // #contact must be able to fill the viewport on its own — shorter, and
+    // scrolling to it bottoms out with the sticky experience deck's last card
+    // still pinned above the footer. 100svh minus the 80px scroll-padding-top
+    // (globals.css) so the anchor scroll lands with the whole footer visible
+    // below the navbar. The headline card stretches (flex-1) to absorb the
+    // extra height.
+    <footer className="min-h-[calc(100svh-80px)] flex flex-col px-3 sm:px-6 pb-6">
       {/* headline card — sits ABOVE the action bar (z-10 + opaque bg) so the
           bar can hide underneath it and slide out */}
       <motion.div
@@ -91,7 +103,7 @@ export default function Footer() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
-        className="relative z-10 bg-[#0b0e14] rounded-[2.5rem] px-6 pt-16 sm:pt-24 pb-12 sm:pb-16 text-center"
+        className="relative z-10 flex-1 flex flex-col justify-center bg-[#0b0e14] rounded-[2.5rem] px-6 pt-16 sm:pt-24 pb-12 sm:pb-16 text-center"
       >
         <h2 className="text-5xl sm:text-7xl lg:text-8xl font-medium tracking-tight text-gray-100">
           {t('hero.name')}

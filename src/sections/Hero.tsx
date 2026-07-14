@@ -2,7 +2,7 @@
 
 import { useRef } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
-import { FaEnvelope, FaEye, FaGithub, FaFacebook, FaTelegram } from 'react-icons/fa'
+import { FaEnvelope, FaEye, FaGithub, FaLinkedin, FaFacebook, FaTelegram } from 'react-icons/fa'
 import { useTranslation } from '@/i18n/useTranslation'
 
 // Timing: the black->white intro curtain plays first, then content reveals.
@@ -222,6 +222,15 @@ export default function Hero() {
             whileHover={{ scale: 1.1, rotate: 5 }}
           >
             <FaGithub size={20} />
+          </motion.a>
+          <motion.a
+            href="https://www.linkedin.com/in/dara-tan-98b499413"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-[#0A66C2] dark:hover:bg-[#0A66C2] hover:text-white dark:hover:text-white transition-all duration-300 shadow-primary hover:shadow-primary-lg"
+            whileHover={{ scale: 1.1, rotate: -5 }}
+          >
+            <FaLinkedin size={20} />
           </motion.a>
           <motion.a
             href="https://www.facebook.com/dara.tan.583"
